@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:t7coach/screens/authenticate/register.dart';
+import 'package:t7coach/screens/authenticate/register_form.dart';
 import 'package:t7coach/screens/authenticate/sign_in_form.dart';
 import 'package:t7coach/shared/widgets/coach_bar.dart';
 
@@ -21,7 +21,7 @@ class _AuthenticateState extends State<Authenticate> {
     if (showSignIn) {
       return SignInForm(toogleView: toogleView);
     } else {
-      return Register(toogleView: toogleView);
+      return RegisterForm(toogleView: toogleView);
     }
   }
 

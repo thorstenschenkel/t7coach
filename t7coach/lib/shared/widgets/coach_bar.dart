@@ -14,7 +14,7 @@ class CoachBar extends StatelessWidget {
             gradient: new LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.amber, Colors.amber[100]],
+              colors: [Colors.deepOrange, Colors.deepOrange[100]],
             ),
           ),
           height: height,

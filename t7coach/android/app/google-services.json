@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "700422344647",
+    "firebase_url": "https://t7coach.firebaseio.com",
+    "project_id": "t7coach",
+    "storage_bucket": "t7coach.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700422344647:android:f39fdf7df2c129b12c13e2",
+        "android_client_info": {
+          "package_name": "de.t7online.t7coach"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "700422344647-aanvqarummj5i0352fse1lsbg6dllk7c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_twNPexGxVUW5RKv8nlFzVFfX-ASVhH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "700422344647-aanvqarummj5i0352fse1lsbg6dllk7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

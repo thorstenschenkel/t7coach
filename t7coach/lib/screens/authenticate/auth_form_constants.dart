@@ -1,0 +1,20 @@
+import 'package:flutter/material.dart';
+
+const headingTextStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
+
+const errorTextStyle = TextStyle(color: Colors.red, fontSize: 14.0);
+
+const topIcon = Icon(
+  Icons.account_box,
+  color: Colors.deepOrange,
+  size: 80.0,
+);
+
+const topContainerPadding =  EdgeInsets.symmetric(vertical: 8, horizontal: 8);
+
+const subContainerPadding = EdgeInsets.symmetric(vertical: 20, horizontal: 20);
+
+const divider = Divider(
+  height: 25,
+  thickness: 2,
+);

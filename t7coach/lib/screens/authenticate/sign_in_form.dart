@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:t7coach/shared/input_constants.dart';
 
+import 'auth_form_constants.dart';
+
 class SignInForm extends StatefulWidget {
   final Function toogleView;
 
@@ -18,20 +20,16 @@ class _SignInFormState extends State<SignInForm> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: topContainerPadding,
         child: Form(
           key: _formKey,
           child: Column(
             children: <Widget>[
-              Icon(
-                Icons.account_box,
-                color: Colors.deepOrange,
-                size: 80.0,
-              ),
+              topIcon,
               Text('Anmeldung',
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600)),
+                  style: headingTextStyle),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 42),
+                padding: subContainerPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
@@ -47,9 +45,10 @@ class _SignInFormState extends State<SignInForm> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         decoration: textInputDecoration.copyWith(
-                            labelText: 'E-Mail-Adresse'),
+                            labelText: 'E-Mail-Adresse',
+                            prefixIcon: Icon(Icons.alternate_email)),
                         validator: (val) => val.isEmpty
-                            ? 'Bitte gebe eine E-Mail-Adresse ein.'
+                            ? 'Bitte gib eine E-Mail-Adresse ein.'
                             : null),
                     SizedBox(height: 10),
                     TextFormField(
@@ -64,10 +63,11 @@ class _SignInFormState extends State<SignInForm> {
                         keyboardType: TextInputType.visiblePassword,
                         textInputAction: TextInputAction.done,
                         obscureText: true,
-                        decoration:
-                            textInputDecoration.copyWith(labelText: 'Passwort'),
+                        decoration: textInputDecoration.copyWith(
+                            labelText: 'Passwort',
+                            prefixIcon: Icon(Icons.lock)),
                         validator: (val) => val.isEmpty
-                            ? 'Bitte gebe ein Passwort ein.'
+                            ? 'Bitte gib ein Passwort ein.'
                             : null),
                     RaisedButton(
                         onPressed: () {
@@ -81,12 +81,9 @@ class _SignInFormState extends State<SignInForm> {
                   ],
                 ),
               ),
-              Divider(
-                height: 25,
-                thickness: 2,
-              ),
+              divider,
               Container(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 42),
+                padding: subContainerPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[

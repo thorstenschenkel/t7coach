@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:t7coach/models/auth_error.dart';
+import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/shared/input_constants.dart';
+
+import 'auth_form_constants.dart';
 
 class RegisterForm extends StatefulWidget {
   final Function toogleView;
@@ -11,28 +15,25 @@ class RegisterForm extends StatefulWidget {
 }
 
 class _RegisterFormState extends State<RegisterForm> {
+  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
   String email = '';
   String password = '';
   String confirmPassword = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        padding: topContainerPadding,
         child: Form(
           key: _formKey,
           child: Column(
             children: <Widget>[
               Stack(
                 children: <Widget>[
-                  Positioned(
-                    child: Icon(
-                      Icons.account_box,
-                      color: Colors.deepOrange,
-                      size: 80.0,
-                    ),
-                  ),
+                  Positioned(child: topIcon),
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -55,10 +56,10 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
               Text(
                 'Registrierung',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.w600),
+                style: headingTextStyle,
               ),
               Container(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 42),
+                padding: subContainerPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
@@ -77,7 +78,7 @@ class _RegisterFormState extends State<RegisterForm> {
                           labelText: 'E-Mail-Adresse'),
                       validator: (val) {
                         return val.isEmpty
-                            ? 'Bitte gebe eine E-Mail-Adresse ein.'
+                            ? 'Bitte gib eine E-Mail-Adresse ein.'
                             : null;
                       },
                     ),
@@ -98,7 +99,7 @@ class _RegisterFormState extends State<RegisterForm> {
                             textInputDecoration.copyWith(labelText: 'Passwort'),
                         validator: (val) {
                           return val.isEmpty
-                              ? 'Bitte gebe Passwort ein.'
+                              ? 'Bitte gib ein Passwort ein.'
                               : null;
                         }),
                     SizedBox(height: 10),
@@ -122,23 +123,35 @@ class _RegisterFormState extends State<RegisterForm> {
                               : null;
                         }),
                     RaisedButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          error = '';
                           if (_formKey.currentState.validate()) {
-                            print('Email: $email');
-                            print('Passwor: $password');
+                            setState(() {
+                              loading = true;
+                            });
+                            dynamic result = await _auth
+                                .registerWithEmailAndPassword(email, password);
+                            if (result is AuthError) {
+                              setState(() {
+                                error = result.errorText;
+                                loading = false;
+                              });
+                            }
                           }
                         },
                         autofocus: true,
                         child: Text('Registrieren')),
+                    SizedBox(height: 8.0),
+                    Text(
+                      error,
+                      style: errorTextStyle,
+                    )
                   ],
                 ),
               ),
-              Divider(
-                height: 25,
-                thickness: 2,
-              ),
+              divider,
               Container(
-                padding: EdgeInsets.symmetric(vertical: 20, horizontal: 42),
+                padding: subContainerPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[

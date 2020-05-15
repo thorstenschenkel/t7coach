@@ -17,6 +17,7 @@ class RegisterForm extends StatefulWidget {
 class _RegisterFormState extends State<RegisterForm> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
   bool loading = false;
   String email = '';
   String password = '';
@@ -29,6 +30,7 @@ class _RegisterFormState extends State<RegisterForm> {
         padding: topContainerPadding,
         child: Form(
           key: _formKey,
+          autovalidate: _autoValidate,
           child: Column(
             children: <Widget>[
               Stack(
@@ -64,7 +66,7 @@ class _RegisterFormState extends State<RegisterForm> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     TextFormField(
-                      onChanged: (val) {
+                      onChanged: (String val) {
                         setState(() {
                           email = val;
                         });
@@ -76,7 +78,7 @@ class _RegisterFormState extends State<RegisterForm> {
                       textInputAction: TextInputAction.next,
                       decoration: textInputDecoration.copyWith(
                           labelText: 'E-Mail-Adresse'),
-                      validator: (val) {
+                      validator: (String val) {
                         return val.isEmpty
                             ? 'Bitte gib eine E-Mail-Adresse ein.'
                             : null;
@@ -84,7 +86,7 @@ class _RegisterFormState extends State<RegisterForm> {
                     ),
                     SizedBox(height: 10),
                     TextFormField(
-                        onChanged: (val) {
+                        onChanged: (String val) {
                           setState(() {
                             password = val;
                           });
@@ -97,14 +99,14 @@ class _RegisterFormState extends State<RegisterForm> {
                         obscureText: true,
                         decoration:
                             textInputDecoration.copyWith(labelText: 'Passwort'),
-                        validator: (val) {
+                        validator: (String val) {
                           return val.isEmpty
                               ? 'Bitte gib ein Passwort ein.'
                               : null;
                         }),
                     SizedBox(height: 10),
                     TextFormField(
-                        onChanged: (val) {
+                        onSaved: (String val) {
                           setState(() {
                             confirmPassword = val;
                           });
@@ -117,27 +119,14 @@ class _RegisterFormState extends State<RegisterForm> {
                         obscureText: true,
                         decoration: textInputDecoration.copyWith(
                             labelText: 'Passwort wiederholen'),
-                        validator: (val) {
+                        validator: (String val) {
                           return val.isEmpty
                               ? 'Bitte wiederhole das Passwort.'
                               : null;
                         }),
                     RaisedButton(
                         onPressed: () async {
-                          error = '';
-                          if (_formKey.currentState.validate()) {
-                            setState(() {
-                              loading = true;
-                            });
-                            dynamic result = await _auth
-                                .registerWithEmailAndPassword(email, password);
-                            if (result is AuthError) {
-                              setState(() {
-                                error = result.errorText;
-                                loading = false;
-                              });
-                            }
-                          }
+                          await _register();
                         },
                         autofocus: true,
                         child: Text('Registrieren')),
@@ -172,4 +161,28 @@ class _RegisterFormState extends State<RegisterForm> {
           ),
         ));
   }
+
+  void _register() async {
+    error = '';
+    if (_formKey.currentState.validate()) {
+      setState(() {
+        loading = true;
+      });
+      _formKey.currentState.save();
+      dynamic result = await _auth
+          .registerWithEmailAndPassword(email, password);
+      if (result is AuthError) {
+        setState(() {
+          _autoValidate = true;
+          error = result.errorText;
+          loading = false;
+        });
+      }
+    } else {
+      setState(() {
+        _autoValidate = true;
+      });
+    }
+  }
+
 }

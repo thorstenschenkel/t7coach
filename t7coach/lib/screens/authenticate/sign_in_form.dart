@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:t7coach/models/auth_error.dart';
+import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/shared/input_constants.dart';
 
 import 'auth_form_constants.dart';
@@ -13,9 +15,13 @@ class SignInForm extends StatefulWidget {
 }
 
 class _SignInFormState extends State<SignInForm> {
+  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = false;
+  bool loading = false;
   String email = '';
   String password = '';
+  String error = '';
 
   @override
   Widget build(BuildContext context) {
@@ -23,18 +29,18 @@ class _SignInFormState extends State<SignInForm> {
         padding: topContainerPadding,
         child: Form(
           key: _formKey,
+          autovalidate: _autoValidate,
           child: Column(
             children: <Widget>[
               topIcon,
-              Text('Anmeldung',
-                  style: headingTextStyle),
+              Text('Anmeldung', style: headingTextStyle),
               Container(
                 padding: subContainerPadding,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
                     TextFormField(
-                        onChanged: (val) {
+                        onSaved: (String val) {
                           setState(() {
                             email = val;
                           });
@@ -47,12 +53,12 @@ class _SignInFormState extends State<SignInForm> {
                         decoration: textInputDecoration.copyWith(
                             labelText: 'E-Mail-Adresse',
                             prefixIcon: Icon(Icons.alternate_email)),
-                        validator: (val) => val.isEmpty
+                        validator: (String val) => val.isEmpty
                             ? 'Bitte gib eine E-Mail-Adresse ein.'
                             : null),
                     SizedBox(height: 10),
                     TextFormField(
-                        onChanged: (val) {
+                        onSaved: (String val) {
                           setState(() {
                             password = val;
                           });
@@ -66,18 +72,19 @@ class _SignInFormState extends State<SignInForm> {
                         decoration: textInputDecoration.copyWith(
                             labelText: 'Passwort',
                             prefixIcon: Icon(Icons.lock)),
-                        validator: (val) => val.isEmpty
-                            ? 'Bitte gib ein Passwort ein.'
-                            : null),
+                        validator: (String val) =>
+                            val.isEmpty ? 'Bitte gib ein Passwort ein.' : null),
                     RaisedButton(
-                        onPressed: () {
-                          if (_formKey.currentState.validate()) {
-                            print('Email: $email');
-                            print('Passwor: $password');
-                          }
+                        onPressed: () async {
+                          await _signIn();
                         },
                         autofocus: true,
                         child: Text('Anmelden')),
+                    SizedBox(height: 8.0),
+                    Text(
+                      error,
+                      style: errorTextStyle,
+                    )
                   ],
                 ),
               ),
@@ -103,5 +110,30 @@ class _SignInFormState extends State<SignInForm> {
             ],
           ),
         ));
+  }
+
+  void _signIn() async {
+    if (_formKey.currentState.validate()) {
+      _formKey.currentState.save();
+      if (_formKey.currentState.validate()) {
+        setState(() {
+          loading = true;
+        });
+        _formKey.currentState.save();
+        dynamic result =
+            await _auth.signInWithEmailAndPassword(email, password);
+        if (result is AuthError) {
+          setState(() {
+            _autoValidate = true;
+            error = result.errorText;
+            loading = false;
+          });
+        }
+      }
+    } else {
+      setState(() {
+        _autoValidate = true;
+      });
+    }
   }
 }

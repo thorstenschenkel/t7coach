@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:t7coach/screens/wrapper.dart';
+import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/themes/material_theme_data.dart';
+
+import 'models/user.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,7 +12,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return StreamProvider<User>.value(value: AuthService().user, child:MaterialApp(
       title: 'T7 Coach',
       theme: MaterialThemeData.themeData,
 //      theme: ThemeData(
@@ -33,6 +37,6 @@ class MyApp extends StatelessWidget {
 ////          .divider-color { border-color: #BDBDBD; }
 //      ),
       home: Wrapper(),
-    );
+    ));
   }
 }

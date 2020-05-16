@@ -7,8 +7,10 @@ import 'auth_form_constants.dart';
 
 class SignInForm extends StatefulWidget {
   final Function toogleView;
+  final Function scrollToTop;
+  final Function loading;
 
-  SignInForm({this.toogleView});
+  SignInForm({this.toogleView, this.scrollToTop, this.loading});
 
   @override
   _SignInFormState createState() => _SignInFormState();
@@ -18,7 +20,7 @@ class _SignInFormState extends State<SignInForm> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
-  bool loading = false;
+  bool _visibilityError = false;
   String email = '';
   String password = '';
   String error = '';
@@ -39,6 +41,19 @@ class _SignInFormState extends State<SignInForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
+                    Visibility(
+                      visible: _visibilityError,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            error,
+                            style: errorTextStyle.copyWith(
+                                color: Theme.of(context).errorColor),
+                          ),
+                          SizedBox(height: 8.0),
+                        ],
+                      ),
+                    ),
                     TextFormField(
                         onSaved: (String val) {
                           setState(() {
@@ -80,11 +95,6 @@ class _SignInFormState extends State<SignInForm> {
                         },
                         autofocus: true,
                         child: Text('Anmelden')),
-                    SizedBox(height: 8.0),
-                    Text(
-                      error,
-                      style: errorTextStyle,
-                    )
                   ],
                 ),
               ),
@@ -117,7 +127,7 @@ class _SignInFormState extends State<SignInForm> {
       _formKey.currentState.save();
       if (_formKey.currentState.validate()) {
         setState(() {
-          loading = true;
+          widget.loading(true);
         });
         _formKey.currentState.save();
         dynamic result =
@@ -126,12 +136,15 @@ class _SignInFormState extends State<SignInForm> {
           setState(() {
             _autoValidate = true;
             error = result.errorText;
-            loading = false;
+            _visibilityError = true;
+            widget.scrollToTop();
+            widget.loading(false);
           });
         }
       }
     } else {
       setState(() {
+        _visibilityError = false;
         _autoValidate = true;
       });
     }

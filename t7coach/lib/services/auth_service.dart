@@ -16,7 +16,8 @@ class AuthService {
     'ERROR_MISSING_EMAIL':
         'E-Mail-Adresse fehlt. Bitte gib eine E-Mail-Adresse ein.',
     'ERROR_MISSING_PASSWORD': 'Passwort fehlt. Bitte gib ein Passwort ein.',
-    'ERROR_USER_NOT_FOUND': 'Es existiert kein Profil zur eingegeben E-Mail-Adresse',
+    'ERROR_USER_NOT_FOUND':
+        'Es existiert kein Profil zur eingegeben E-Mail-Adresse',
     'ERROR_WRONG_PASSWORD': 'Passwort ist ungültig.'
   };
 

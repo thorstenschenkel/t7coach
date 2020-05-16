@@ -7,8 +7,10 @@ import 'auth_form_constants.dart';
 
 class RegisterForm extends StatefulWidget {
   final Function toogleView;
+  final Function scrollToTop;
+  final Function loading;
 
-  RegisterForm({this.toogleView});
+  RegisterForm({this.toogleView, this.scrollToTop, this.loading});
 
   @override
   _RegisterFormState createState() => _RegisterFormState();
@@ -18,7 +20,7 @@ class _RegisterFormState extends State<RegisterForm> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
-  bool loading = false;
+  bool _visibilityError = false;
   String email = '';
   String password = '';
   String confirmPassword = '';
@@ -65,6 +67,19 @@ class _RegisterFormState extends State<RegisterForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
+                    Visibility(
+                      visible: _visibilityError,
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            error,
+                            style: errorTextStyle.copyWith(
+                                color: Theme.of(context).errorColor),
+                          ),
+                          SizedBox(height: 8.0),
+                        ],
+                      ),
+                    ),
                     TextFormField(
                       onChanged: (String val) {
                         setState(() {
@@ -77,7 +92,8 @@ class _RegisterFormState extends State<RegisterForm> {
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       decoration: textInputDecoration.copyWith(
-                          labelText: 'E-Mail-Adresse'),
+                          labelText: 'E-Mail-Adresse',
+                          prefixIcon: Icon(Icons.alternate_email)),
                       validator: (String val) {
                         return val.isEmpty
                             ? 'Bitte gib eine E-Mail-Adresse ein.'
@@ -98,7 +114,8 @@ class _RegisterFormState extends State<RegisterForm> {
                         textInputAction: TextInputAction.done,
                         obscureText: true,
                         decoration:
-                            textInputDecoration.copyWith(labelText: 'Passwort'),
+                            textInputDecoration.copyWith(labelText: 'Passwort',
+                                prefixIcon: Icon(Icons.lock)),
                         validator: (String val) {
                           return val.isEmpty
                               ? 'Bitte gib ein Passwort ein.'
@@ -118,7 +135,8 @@ class _RegisterFormState extends State<RegisterForm> {
                         textInputAction: TextInputAction.done,
                         obscureText: true,
                         decoration: textInputDecoration.copyWith(
-                            labelText: 'Passwort wiederholen'),
+                            labelText: 'Passwort wiederholen',
+                            prefixIcon: Icon(Icons.lock)),
                         validator: (String val) {
                           return val.isEmpty
                               ? 'Bitte wiederhole das Passwort.'
@@ -130,11 +148,6 @@ class _RegisterFormState extends State<RegisterForm> {
                         },
                         autofocus: true,
                         child: Text('Registrieren')),
-                    SizedBox(height: 8.0),
-                    Text(
-                      error,
-                      style: errorTextStyle,
-                    )
                   ],
                 ),
               ),
@@ -166,23 +179,25 @@ class _RegisterFormState extends State<RegisterForm> {
     error = '';
     if (_formKey.currentState.validate()) {
       setState(() {
-        loading = true;
+        widget.loading(true);
       });
       _formKey.currentState.save();
-      dynamic result = await _auth
-          .registerWithEmailAndPassword(email, password);
+      dynamic result =
+          await _auth.registerWithEmailAndPassword(email, password);
       if (result is AuthError) {
         setState(() {
           _autoValidate = true;
+          _visibilityError = true;
           error = result.errorText;
-          loading = false;
+          widget.scrollToTop();
+          widget.loading(false);
         });
       }
     } else {
       setState(() {
+        _visibilityError = false;
         _autoValidate = true;
       });
     }
   }
-
 }

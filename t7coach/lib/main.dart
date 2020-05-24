@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:t7coach/screens/authenticate/reset_password.dart';
+import 'package:t7coach/screens/home/home.dart';
 import 'package:t7coach/screens/wrapper.dart';
 import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/themes/material_theme_data.dart';
@@ -12,9 +14,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(value: AuthService().user, child:MaterialApp(
-      title: 'T7 Coach',
-      theme: MaterialThemeData.themeData,
+    return StreamProvider<User>.value(
+        value: AuthService().user,
+        child: MaterialApp(
+          title: 'T7 Coach',
+          theme: MaterialThemeData.themeData,
 //      theme: ThemeData(
 //        // This is the theme of your application.
 //        //
@@ -36,7 +40,12 @@ class MyApp extends StatelessWidget {
 ////          .secondary-text-color { color: #757575; }
 ////          .divider-color { border-color: #BDBDBD; }
 //      ),
-      home: Wrapper(),
-    ));
+          initialRoute: '/',
+          routes: {
+            '/': (context) => Wrapper(),
+            '/home': (context) => Home(),
+            '/reset-password': (context) => ResetPassword()
+          },
+        ));
   }
 }

@@ -55,7 +55,7 @@ class _AuthenticateState extends State<Authenticate> {
       ),
       color: Theme.of(context).colorScheme.secondary,
       child: Stack(children: <Widget>[
-        CoachBar(210.0),
+        CoachBar(210.0, bgImage: true),
         SingleChildScrollView(
             controller: _scrollController,
             child: Padding(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t7coach/models/auth_error.dart';
+import 'package:t7coach/screens/authenticate/register_icon.dart';
 import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/shared/input_constants.dart';
 
@@ -35,29 +36,7 @@ class _RegisterFormState extends State<RegisterForm> {
           autovalidate: _autoValidate,
           child: Column(
             children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  Positioned(child: topIcon),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Icon(
-                      Icons.add_circle_outline,
-                      color: Colors.white,
-                      size: 30.0,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Icon(
-                      Icons.add_circle,
-                      color: Colors.grey[700],
-                      size: 30.0,
-                    ),
-                  ),
-                ],
-              ),
+              RegisterIcon(),
               Text(
                 'Registrierung',
                 style: headingTextStyle,
@@ -67,19 +46,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    Visibility(
-                      visible: _visibilityError,
-                      child: Column(
-                        children: <Widget>[
-                          Text(
-                            error,
-                            style: errorTextStyle.copyWith(
-                                color: Theme.of(context).errorColor),
-                          ),
-                          SizedBox(height: 8.0),
-                        ],
-                      ),
-                    ),
+                    buildErrorBox(),
                     TextFormField(
                       onChanged: (String val) {
                         setState(() {
@@ -92,12 +59,9 @@ class _RegisterFormState extends State<RegisterForm> {
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                       decoration: textInputDecoration.copyWith(
-                          labelText: 'E-Mail-Adresse',
-                          prefixIcon: Icon(Icons.alternate_email)),
+                          labelText: 'E-Mail-Adresse', prefixIcon: Icon(Icons.alternate_email)),
                       validator: (String val) {
-                        return val.isEmpty
-                            ? 'Bitte gib eine E-Mail-Adresse ein.'
-                            : null;
+                        return val.isEmpty ? 'Bitte gib eine E-Mail-Adresse ein.' : null;
                       },
                     ),
                     SizedBox(height: 10),
@@ -113,13 +77,9 @@ class _RegisterFormState extends State<RegisterForm> {
                         keyboardType: TextInputType.visiblePassword,
                         textInputAction: TextInputAction.done,
                         obscureText: true,
-                        decoration:
-                            textInputDecoration.copyWith(labelText: 'Passwort',
-                                prefixIcon: Icon(Icons.lock)),
+                        decoration: textInputDecoration.copyWith(labelText: 'Passwort', prefixIcon: Icon(Icons.lock)),
                         validator: (String val) {
-                          return val.isEmpty
-                              ? 'Bitte gib ein Passwort ein.'
-                              : null;
+                          return val.isEmpty ? 'Bitte gib ein Passwort ein.' : null;
                         }),
                     SizedBox(height: 10),
                     TextFormField(
@@ -135,13 +95,11 @@ class _RegisterFormState extends State<RegisterForm> {
                         textInputAction: TextInputAction.done,
                         obscureText: true,
                         decoration: textInputDecoration.copyWith(
-                            labelText: 'Passwort wiederholen',
-                            prefixIcon: Icon(Icons.lock)),
+                            labelText: 'Passwort wiederholen', prefixIcon: Icon(Icons.lock)),
                         validator: (String val) {
-                          return val.isEmpty
-                              ? 'Bitte wiederhole das Passwort.'
-                              : null;
+                          return val.isEmpty ? 'Bitte wiederhole das Passwort.' : null;
                         }),
+                    SizedBox(height: 5),
                     RaisedButton(
                         onPressed: () async {
                           await _register();
@@ -176,14 +134,12 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   void _register() async {
-    error = '';
     if (_formKey.currentState.validate()) {
       setState(() {
         widget.loading(true);
       });
       _formKey.currentState.save();
-      dynamic result =
-          await _auth.registerWithEmailAndPassword(email, password);
+      dynamic result = await _auth.registerWithEmailAndPassword(email, password);
       if (result is AuthError) {
         setState(() {
           _autoValidate = true;
@@ -195,9 +151,30 @@ class _RegisterFormState extends State<RegisterForm> {
       }
     } else {
       setState(() {
+        error = '';
         _visibilityError = false;
         _autoValidate = true;
       });
     }
+  }
+
+  Widget buildErrorBox() {
+    return Visibility(
+      visible: _visibilityError,
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: double.infinity,
+            color: Colors.red[50],
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              error,
+              style: errorTextStyle.copyWith(color: Theme.of(context).errorColor),
+            ),
+          ),
+          SizedBox(height: 8.0),
+        ],
+      ),
+    );
   }
 }

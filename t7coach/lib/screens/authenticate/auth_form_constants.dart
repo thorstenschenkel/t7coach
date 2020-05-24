@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
 
 const headingTextStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
-
+const simpleTextStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w300);
 const errorTextStyle = TextStyle(color: Colors.red, fontSize: 14.0);
-
-const topIcon = Icon(
-  Icons.account_box,
-  color: Colors.deepOrange,
-  size: 80.0,
-);
 
 const topContainerPadding =  EdgeInsets.symmetric(vertical: 8, horizontal: 8);
 

@@ -9,16 +9,16 @@ class AuthService {
   // https://github.com/firebase/FirebaseUI-Android/blob/master/auth/src/main/java/com/firebase/ui/auth/util/FirebaseAuthError.java
   static const errorTexts = {
     'ERROR_INVALID_EMAIL': 'Bitte gib eine gültige E-Mail-Adresse ein.',
-    'ERROR_WEAK_PASSWORD':
-        'Wähle ein sicheres Passwort. Das Passwort muss mit mindestens 8 Zeichen lang sein. ',
+    'ERROR_WEAK_PASSWORD': 'Wähle ein sicheres Passwort. Das Passwort muss mit mindestens 8 Zeichen lang sein. ',
     'ERROR_EMAIL_ALREADY_IN_USE':
         'Die E-Mail-Adresse wird bereits verwendet. Versuche es mit einer anderen E-Mail-Adresse.',
-    'ERROR_MISSING_EMAIL':
-        'E-Mail-Adresse fehlt. Bitte gib eine E-Mail-Adresse ein.',
+    'ERROR_MISSING_EMAIL': 'E-Mail-Adresse fehlt. Bitte gib eine E-Mail-Adresse ein.',
     'ERROR_MISSING_PASSWORD': 'Passwort fehlt. Bitte gib ein Passwort ein.',
-    'ERROR_USER_NOT_FOUND':
-        'Es existiert kein Profil zur eingegeben E-Mail-Adresse',
+    'ERROR_USER_NOT_FOUND': 'Es existiert kein Profil zur eingegeben E-Mail-Adresse',
     'ERROR_WRONG_PASSWORD': 'Passwort ist ungültig.'
+    ///  * `ERROR_USER_DISABLED` - If the user has been disabled (for example, in the Firebase console)
+    ///  * `ERROR_TOO_MANY_REQUESTS` - If there was too many attempts to sign in as this user.
+    ///  * `ERROR_OPERATION_NOT_ALLOWED` - Indicates that Email & Password accounts are not enabled.
   };
 
   // create user object based on FirebaseUser
@@ -26,11 +26,9 @@ class AuthService {
     return user != null ? User(uid: user.uid) : null;
   }
 
-  // register with email & password
   Future registerWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
       // create a new document for the user with the uid
 //      await DatabaseService(uid: user.uid)
@@ -42,11 +40,9 @@ class AuthService {
     }
   }
 
-  // sign in with email & password
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
@@ -55,7 +51,6 @@ class AuthService {
     }
   }
 
-  // sign out
   Future signOut() async {
     try {
       return await _auth.signOut();
@@ -64,10 +59,18 @@ class AuthService {
     }
   }
 
+  Future sendPasswortResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return null;
+    } catch (e) {
+      return _exceptionToError(e, 'Fehler beim Zurücksetzen des Passworts');
+    }
+  }
+
   // auth change user stream
   Stream<User> get user {
-    return _auth.onAuthStateChanged
-        .map((FirebaseUser user) => _userFromFirebaseUser(user));
+    return _auth.onAuthStateChanged.map((FirebaseUser user) => _userFromFirebaseUser(user));
   }
 
   AuthError _exceptionToError(exception, String defaultText) {

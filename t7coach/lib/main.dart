@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:t7coach/screens/authenticate/reset_password.dart';
 import 'package:t7coach/screens/home/home.dart';
+import 'package:t7coach/screens/user/user_data_form.dart';
 import 'package:t7coach/screens/wrapper.dart';
 import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/themes/material_theme_data.dart';
@@ -44,7 +45,8 @@ class MyApp extends StatelessWidget {
           routes: {
             '/': (context) => Wrapper(),
             '/home': (context) => Home(),
-            '/reset-password': (context) => ResetPassword()
+            '/reset-password': (context) => ResetPassword(),
+            '/user-data-form': (context) => UserDataForm()
           },
         ));
   }

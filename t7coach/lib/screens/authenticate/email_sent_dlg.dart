@@ -13,6 +13,7 @@ class EmailSentDlg extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('E-Mail versendet'),
+          elevation: 0,
         ),
         body: Container(
             padding: topContainerPadding,

@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:t7coach/models/auth_error.dart';
 import 'package:t7coach/models/user.dart';
+import 'package:t7coach/models/user_data.dart';
+
+import 'datadase_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -16,6 +19,7 @@ class AuthService {
     'ERROR_MISSING_PASSWORD': 'Passwort fehlt. Bitte gib ein Passwort ein.',
     'ERROR_USER_NOT_FOUND': 'Es existiert kein Profil zur eingegeben E-Mail-Adresse',
     'ERROR_WRONG_PASSWORD': 'Passwort ist ungültig.'
+
     ///  * `ERROR_USER_DISABLED` - If the user has been disabled (for example, in the Firebase console)
     ///  * `ERROR_TOO_MANY_REQUESTS` - If there was too many attempts to sign in as this user.
     ///  * `ERROR_OPERATION_NOT_ALLOWED` - Indicates that Email & Password accounts are not enabled.
@@ -23,7 +27,7 @@ class AuthService {
 
   // create user object based on FirebaseUser
   User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
+    return user != null ? User(uid: user.uid, email: user.email) : null;
   }
 
   Future registerWithEmailAndPassword(String email, String password) async {
@@ -31,8 +35,7 @@ class AuthService {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
       // create a new document for the user with the uid
-//      await DatabaseService(uid: user.uid)
-//          .updateUserData('0', 'new crew member', 100);
+      await DatabaseService(uid: user.uid).updateUserData(UserData(uid: user.uid));
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

@@ -4,8 +4,8 @@ class UserData {
   String firstName = '';
   String lastName = '';
   String initials = '';
+  int accountColor;
 
-  // Color accountColor = Colors.amber;
   // int groupePin = 0;
 
   UserData({this.uid});
@@ -17,7 +17,8 @@ class UserData {
           groupeId == other.groupeId &&
           firstName == other.firstName &&
           lastName == other.lastName &&
-          initials == other.initials;
+          initials == other.initials &&
+          accountColor == other.accountColor;
     } else {
       return false;
     }

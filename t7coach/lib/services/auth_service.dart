@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:t7coach/models/auth_error.dart';
 import 'package:t7coach/models/user.dart';
@@ -35,7 +38,9 @@ class AuthService {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
       // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid).updateUserData(UserData(uid: user.uid));
+      final userData = UserData(uid: user.uid);
+      userData.accountColor = Colors.primaries[Random().nextInt(Colors.primaries.length)].value;
+      await DatabaseService(uid: user.uid).updateUserData(userData);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

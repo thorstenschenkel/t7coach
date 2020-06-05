@@ -122,7 +122,7 @@ class _SignInFormState extends State<SignInForm> {
         ));
   }
 
-  void _signIn() async {
+  _signIn() async {
     if (_formKey.currentState.validate()) {
       setState(() {
         widget.loading(true);

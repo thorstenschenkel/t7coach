@@ -91,7 +91,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
   }
 
-  void _resetPassword() async {
+  _resetPassword() async {
 
     if (_formKey.currentState.validate()) {
       setState(() {

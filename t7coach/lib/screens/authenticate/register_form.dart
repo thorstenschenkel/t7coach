@@ -133,7 +133,7 @@ class _RegisterFormState extends State<RegisterForm> {
         ));
   }
 
-  void _register() async {
+  _register() async {
     if (_formKey.currentState.validate()) {
       setState(() {
         widget.loading(true);

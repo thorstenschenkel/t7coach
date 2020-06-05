@@ -7,12 +7,10 @@ import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
 import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
 import 'package:t7coach/services/datadase_service.dart';
+import 'package:t7coach/shared/dialogs/color_picker_dialog_util.dart';
+import 'package:t7coach/shared/dialogs/discard_changes_dialog_util.dart';
 import 'package:t7coach/shared/input_constants.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
-
-import 'discard_changes_dialog_util.dart';
-
-// https://pub.dev/packages/flutter_colorpicker#-readme-tab-
 
 class UserDataEditForm extends StatefulWidget {
   @override
@@ -20,23 +18,22 @@ class UserDataEditForm extends StatefulWidget {
 }
 
 class _UserDataEditFormState extends State<UserDataEditForm> {
-
   ScrollController _scrollController = ScrollController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _autoValidate = false;
   bool _visibilityError = false;
   String error = '';
+
   // form values
   String _firstName;
   String _lastName;
   String _initials;
   int _groupeId;
-  Color _accountColor = Colors.green;
+  Color _accountColor;
 
   @override
   Widget build(BuildContext context) {
-
     final user = Provider.of<User>(context);
 
     UserData _getNewUserData(UserData userData) {
@@ -63,8 +60,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     }
 
     void _scrollToTop() {
-      _scrollController.animateTo(0,
-          duration: Duration(milliseconds: 300), curve: Curves.easeInSine);
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeInSine);
     }
 
     _save(UserData userData) async {
@@ -107,11 +103,11 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
 
     Future<bool> _onWillPop(UserData userData) async {
       UserData newUserData = _getNewUserData(userData);
-      if ( userData == newUserData ) {
+      if (userData == newUserData) {
         _back();
       } else {
         CloseForm ret = await _showDiscardChangesDialog();
-        if ( ret == CloseForm.YES) {
+        if (ret == CloseForm.YES) {
           _back();
         }
       }
@@ -122,12 +118,13 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       if (_accountColor != null) {
         return _accountColor;
       }
-      return userData.accountColor == null ? Colors.amber : Color(userData.accountColor);
+      _accountColor = userData.accountColor == null ? Colors.amber : Color(userData.accountColor);
+      return _accountColor;
     }
 
     Widget _editButton(Function onPress) {
       return RawMaterialButton(
-        onPressed: () {
+        onPressed: () async {
           onPress();
         },
         elevation: 2.0,
@@ -138,6 +135,20 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
         ),
         padding: EdgeInsets.all(2.0),
         shape: CircleBorder(),
+      );
+    }
+
+    // https://pub.dev/packages/dropdown_formfield
+    // https://www.youtube.com/watch?v=0QCv9Bkut1Q
+    Widget _createGroupe(UserData userData) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('Trainingsgruppe', style: heading2TextStyle, textAlign: TextAlign.left),
+          Row(
+            children: <Widget>[Expanded(child: Text('TODO')), IconButton(icon: Icon(Icons.add), onPressed: () {})],
+          ),
+        ],
       );
     }
 
@@ -158,9 +169,10 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                   Positioned(
                       bottom: -2,
                       right: -20,
-                      child: _editButton(() {
+                      child: _editButton(() async {
+                        Color pickerColor = await ColorPickerDialogUtil.showColorPickerDialog(context, _accountColor);
                         setState(() {
-                          _accountColor = Colors.red;
+                          _accountColor = pickerColor;
                         });
                       }))
                 ],
@@ -199,6 +211,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           buildErrorBox(),
                           _createHeader(userData),
@@ -244,7 +257,9 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                                         _initials = val.trim();
                                       });
                                     },
-                                  )
+                                  ),
+                                  Divider(thickness: 1.25),
+                                  _createGroupe(userData)
                                 ],
                               ),
                             ),
@@ -279,5 +294,4 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       ),
     );
   }
-
 }

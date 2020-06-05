@@ -6,13 +6,13 @@ class DiscardChangesDialogUtil {
   static Future<CloseForm> showDiscardChangesDialog(BuildContext context) async {
     return showDialog<CloseForm>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          title: Text('Nicht gespeichert Änderungen'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Daten wurden bearbeitet.'),
                 Text('Sollen die Änderungen verworfen werden?'),
               ],
             ),

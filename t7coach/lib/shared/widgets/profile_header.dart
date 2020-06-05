@@ -22,8 +22,20 @@ class ProfilHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return UserAccountsDrawerHeader(
-      accountName: Text(getAccountName(userData)),
-      accountEmail: Text(user.email),
+      accountName: Container(
+        color: Colors.red[800],
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(5,2,5,2),
+          child: Text(getAccountName(userData)),
+        ),
+      ),
+      accountEmail: Container(
+        color: Colors.red[800],
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(5,2,5,2),
+          child: Text(user.email),
+        ),
+      ),
       margin: EdgeInsets.zero,
       decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/bahn001.png'), fit: BoxFit.cover)),
       currentAccountPicture: new CircleAvatar(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const headingTextStyle = TextStyle(fontSize: 30, fontWeight: FontWeight.w600);
+const heading2TextStyle = TextStyle(fontSize: 20, fontWeight: FontWeight.w500);
 const simpleTextStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w300);
 const errorTextStyle = TextStyle(color: Colors.red, fontSize: 14.0);
 

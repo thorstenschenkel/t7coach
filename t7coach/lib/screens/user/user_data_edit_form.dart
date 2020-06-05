@@ -10,16 +10,13 @@ import 'package:t7coach/services/datadase_service.dart';
 import 'package:t7coach/shared/input_constants.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
 
+import 'discard_changes_dialog_util.dart';
+
 // https://pub.dev/packages/flutter_colorpicker#-readme-tab-
 
 class UserDataEditForm extends StatefulWidget {
   @override
   _UserDataEditFormState createState() => _UserDataEditFormState();
-}
-
-enum CloseForm {
-  YES,
-  NO
 }
 
 class _UserDataEditFormState extends State<UserDataEditForm> {
@@ -104,37 +101,8 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       Navigator.of(context).popAndPushNamed('/user-data-form');
     }
 
-    Future<CloseForm> _showMyDialog() async {
-      return showDialog<CloseForm>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text('Daten wurden bearbeitet.'),
-                  Text('Sollen die Änderungen verworfen werden?'),
-                ],
-              ),
-            ),
-            actions: <Widget>[
-              FlatButton(
-                child: Text('Ja'),
-                onPressed: () {
-                  Navigator.of(context).pop(CloseForm.YES);
-                },
-              ),
-              FlatButton(
-                child: Text('Nein'),
-                onPressed: () {
-                  Navigator.of(context).pop(CloseForm.NO);
-                },
-              ),
-            ],
-          );
-        },
-      );
+    Future<CloseForm> _showDiscardChangesDialog() async {
+      return await DiscardChangesDialogUtil.showDiscardChangesDialog(context);
     }
 
     Future<bool> _onWillPop(UserData userData) async {
@@ -142,7 +110,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       if ( userData == newUserData ) {
         _back();
       } else {
-        CloseForm ret = await _showMyDialog();
+        CloseForm ret = await _showDiscardChangesDialog();
         if ( ret == CloseForm.YES) {
           _back();
         }

@@ -14,7 +14,7 @@ class DatabaseService {
   Future updateUserData(UserData userData) async {
     try {
       final Map<String, dynamic> data = {
-        'groupeId': userData.groupeId,
+        'groupId': userData.groupId,
         'firstName': userData.firstName,
         'lastName': userData.lastName,
         'initials': userData.initials,
@@ -29,7 +29,7 @@ class DatabaseService {
 
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     UserData userData = UserData(uid: uid);
-    userData.groupeId = snapshot.data['groupeId'];
+    userData.groupId = snapshot.data['groupId'];
     userData.firstName = snapshot.data['firstName'];
     userData.lastName = snapshot.data['lastName'];
     userData.initials = snapshot.data['initials'];

@@ -1,6 +1,6 @@
 class UserData {
   final String uid;
-  String groupeId;
+  String groupId;
   String firstName = '';
   String lastName = '';
   String initials = '';
@@ -14,7 +14,7 @@ class UserData {
   bool operator ==(other) {
     if (other is UserData) {
       return uid == other.uid &&
-          groupeId == other.groupeId &&
+          groupId == other.groupId &&
           firstName == other.firstName &&
           lastName == other.lastName &&
           initials == other.initials &&

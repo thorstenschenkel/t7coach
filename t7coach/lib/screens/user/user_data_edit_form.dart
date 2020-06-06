@@ -29,7 +29,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
   String _firstName;
   String _lastName;
   String _initials;
-  int _groupeId;
+  int _groupId;
   Color _accountColor;
 
   @override
@@ -39,7 +39,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     UserData _getNewUserData(UserData userData) {
       _formKey.currentState.save();
       UserData newUserData = UserData(uid: user.uid);
-      newUserData.groupeId = _groupeId ?? userData.groupeId;
+      newUserData.groupId = _groupId ?? userData.groupId;
       newUserData.firstName = (_firstName ?? userData.firstName).trim();
       newUserData.lastName = (_lastName ?? userData.lastName).trim();
       newUserData.initials = (_initials ?? userData.initials).trim();
@@ -140,7 +140,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
 
     // https://pub.dev/packages/dropdown_formfield
     // https://www.youtube.com/watch?v=0QCv9Bkut1Q
-    Widget _createGroupe(UserData userData) {
+    Widget _createGroup(UserData userData) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -259,7 +259,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                                     },
                                   ),
                                   Divider(thickness: 1.25),
-                                  _createGroupe(userData)
+                                  _createGroup(userData)
                                 ],
                               ),
                             ),

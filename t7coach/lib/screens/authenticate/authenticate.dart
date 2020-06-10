@@ -22,8 +22,7 @@ class _AuthenticateState extends State<Authenticate> {
   }
 
   void scrollToTop() {
-    _scrollController.animateTo(0,
-        duration: Duration(milliseconds: 300), curve: Curves.easeInSine);
+    _scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeInSine);
   }
 
   void loading(bool isLoading) {
@@ -34,11 +33,9 @@ class _AuthenticateState extends State<Authenticate> {
 
   Widget getForm() {
     if (showSignIn) {
-      return SignInForm(
-          toogleView: toogleView, scrollToTop: scrollToTop, loading: loading);
+      return SignInForm(toogleView: toogleView, scrollToTop: scrollToTop, loading: loading);
     } else {
-      return RegisterForm(
-          toogleView: toogleView, scrollToTop: scrollToTop, loading: loading);
+      return RegisterForm(toogleView: toogleView, scrollToTop: scrollToTop, loading: loading);
     }
   }
 
@@ -49,7 +46,7 @@ class _AuthenticateState extends State<Authenticate> {
     return Scaffold(
         body: LoadingOverlay(
       isLoading: _isLoading,
-      opacity: 0.1,
+      opacity: 0.75,
       progressIndicator: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.secondary),
       ),
@@ -60,10 +57,7 @@ class _AuthenticateState extends State<Authenticate> {
             controller: _scrollController,
             child: Padding(
                 padding: EdgeInsets.only(top: 125),
-                child: Card(
-                    elevation: 4.0,
-                    margin: const EdgeInsets.all(8.0),
-                    child: form)))
+                child: Card(elevation: 4.0, margin: const EdgeInsets.all(8.0), child: form)))
       ]),
     ));
   }

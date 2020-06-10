@@ -123,6 +123,7 @@ class _SignInFormState extends State<SignInForm> {
   }
 
   _signIn() async {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState.validate()) {
       setState(() {
         widget.loading(true);

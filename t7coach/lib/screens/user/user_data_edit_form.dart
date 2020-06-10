@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:t7coach/models/db_error.dart';
+import 'package:t7coach/models/group.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
 import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
@@ -13,6 +14,10 @@ import 'package:t7coach/shared/input_constants.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
 
 class UserDataEditForm extends StatefulWidget {
+  final UserData userData;
+
+  UserDataEditForm(@required this.userData);
+
   @override
   _UserDataEditFormState createState() => _UserDataEditFormState();
 }
@@ -24,13 +29,28 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
   bool _autoValidate = false;
   bool _visibilityError = false;
   String error = '';
+  List<Group> groups;
 
   // form values
   String _firstName;
   String _lastName;
   String _initials;
-  int _groupId;
+  String _groupId;
+  String _groupPin;
   Color _accountColor;
+  bool _pinVisibility;
+
+  bool _isGroupPinRequired(UserData userData) {
+    return userData.groupId == null || userData.groupId.isEmpty || _groupId != userData.groupId;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _groupId = widget.userData.groupId;
+    _pinVisibility = _isGroupPinRequired(widget.userData);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +83,42 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       _scrollController.animateTo(0, duration: Duration(milliseconds: 300), curve: Curves.easeInSine);
     }
 
+    void _setError(String text) {
+      setState(() {
+        error = text;
+        _visibilityError = true;
+      });
+      _scrollToTop();
+      setState(() {
+        _isLoading = false;
+      });
+    }
+
+
+    bool _checkPin() {
+      bool okay = true;
+      if ( _pinVisibility ) {
+        Group group = groups.firstWhere((group) => group.id == _groupId, orElse: null);
+        if ( group == null ) {
+          okay = false;
+        }
+        okay = group.id == _groupPin;
+      }
+      if ( !okay ) {
+        _setError('Die PIN für Trainingsgruppe ist falsch.');
+      }
+      return okay;
+    }
+
     _save(UserData userData) async {
+      FocusScope.of(context).unfocus();
       setState(() {
         _autoValidate = true;
       });
       if (_formKey.currentState.validate()) {
+        if ( !_checkPin()) {
+          return;
+        }
         setState(() {
           _isLoading = true;
         });
@@ -78,16 +129,11 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
           _isLoading = false;
         });
         if (result is DbError) {
-          setState(() {
-            _autoValidate = true;
-            error = result.errorText;
-            _visibilityError = true;
-          });
-          _scrollToTop();
-        } else {
-          Navigator.of(context).pop();
-          Navigator.of(context).pushNamed('/user-data-form');
+          _setError(result.errorText);
+          return;
         }
+        Navigator.of(context).pop();
+        Navigator.of(context).pushNamed('/user-data-form');
       } else {
         _scrollToTop();
       }
@@ -123,30 +169,86 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     }
 
     Widget _editButton(Function onPress) {
-      return RawMaterialButton(
-        onPressed: () async {
-          onPress();
-        },
-        elevation: 2.0,
-        fillColor: Colors.grey,
-        child: Icon(
-          Icons.edit,
-          size: 20.0,
+      return SizedBox(
+        width: 37.5,
+        height: 37.5,
+        child: FloatingActionButton(
+          onPressed: () async {
+            onPress();
+          },
+          child: Icon(Icons.edit),
+          backgroundColor: Colors.grey,
+          mini: true,
         ),
-        padding: EdgeInsets.all(2.0),
-        shape: CircleBorder(),
       );
     }
 
-    // https://pub.dev/packages/dropdown_formfield
-    // https://www.youtube.com/watch?v=0QCv9Bkut1Q
+    List<DropdownMenuItem> _createGroupItems() {
+      List<DropdownMenuItem> items = [];
+      groups.forEach((Group group) {
+        DropdownMenuItem item = DropdownMenuItem(value: group.id, child: Text(group.name));
+        items.add(item);
+      });
+      return items;
+    }
+
     Widget _createGroup(UserData userData) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text('Trainingsgruppe', style: heading2TextStyle, textAlign: TextAlign.left),
+          SizedBox(height: 10),
           Row(
-            children: <Widget>[Expanded(child: Text('TODO')), IconButton(icon: Icon(Icons.add), onPressed: () {})],
+            children: <Widget>[
+              Expanded(
+                child: DropdownButtonFormField(
+                    value: userData.groupId,
+                    decoration: textInputDecoration.copyWith(labelText: 'Gruppenname'),
+                    items: _createGroupItems(),
+                    onChanged: (val) {
+                      setState(() {
+                        _groupId = val;
+                        _pinVisibility = _isGroupPinRequired(userData);
+                      });
+                    },
+                    validator: (val) {
+                      return val == null ? 'Bitte wähle eine Traingsgruppe aus.' : null;
+                    }),
+              ),
+              IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () async {
+                    await Navigator.pushNamed(context, '/group-form');
+                    setState(() {});
+                  }),
+            ],
+          ),
+          SizedBox(height: 10),
+          Visibility(
+            visible: _pinVisibility,
+            child: Container(
+              width: 175,
+              child: TextFormField(
+                  onSaved: (String val) {
+                    setState(() {
+                      _groupPin = val;
+                      if (_groupPin.length > 4) {
+                        _groupPin = _groupPin.substring(0, 3);
+                      }
+                    });
+                  },
+                  onEditingComplete: () {
+                    FocusScope.of(context).nextFocus();
+                  },
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  inputFormatters: [WhitelistingTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
+                  textInputAction: TextInputAction.next,
+                  decoration: textInputDecoration.copyWith(labelText: 'PIN'),
+                  validator: (String val) {
+                    return val.isEmpty || val.length < 4 ? 'Bitte gib eine PIN\nmit vier Ziffern ein.' : null;
+                  }),
+            ),
           ),
         ],
       );
@@ -167,8 +269,8 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                     ),
                   ),
                   Positioned(
-                      bottom: -2,
-                      right: -20,
+                      bottom: 0,
+                      right: 0,
                       child: _editButton(() async {
                         Color pickerColor = await ColorPickerDialogUtil.showColorPickerDialog(context, _accountColor);
                         setState(() {
@@ -184,46 +286,47 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       );
     }
 
-    return StreamBuilder<UserData>(
-        stream: DatabaseService(uid: user.uid).userData,
+    return StreamBuilder<List<Group>>(
+        stream: DatabaseService(uid: user.uid).groups,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            UserData userData = snapshot.data;
+            groups = snapshot.data;
             return WillPopScope(
               onWillPop: () async {
-                return await _onWillPop(userData);
+                return await _onWillPop(widget.userData);
               },
               child: Scaffold(
                   appBar: AppBar(title: Text('Profil berabeiten'), elevation: 0, actions: [
                     IconButton(
                       icon: Icon(Icons.check),
                       onPressed: () {
-                        _save(userData);
+                        _save(widget.userData);
                       },
                     ),
                   ]),
                   body: LoadingOverlay(
                     isLoading: _isLoading,
-                    opacity: 0.1,
+                    opacity: 0.75,
                     progressIndicator: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.secondary),
                     ),
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           buildErrorBox(),
-                          _createHeader(userData),
+                          _createHeader(widget.userData),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Form(
                               key: _formKey,
                               autovalidate: _autoValidate,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
                                   TextFormField(
-                                    initialValue: userData.firstName,
+                                    initialValue: widget.userData.firstName,
                                     decoration: textInputDecoration.copyWith(labelText: 'Vorname'),
                                     keyboardType: TextInputType.text,
                                     onSaved: (String val) {
@@ -234,7 +337,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                                   ),
                                   SizedBox(height: 5),
                                   TextFormField(
-                                    initialValue: userData.lastName,
+                                    initialValue: widget.userData.lastName,
                                     decoration: textInputDecoration.copyWith(labelText: 'Nachname'),
                                     keyboardType: TextInputType.text,
                                     onSaved: (String val) {
@@ -244,22 +347,28 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                                     },
                                   ),
                                   SizedBox(height: 5),
-                                  TextFormField(
-                                    initialValue: userData.initials,
-                                    decoration: textInputDecoration.copyWith(labelText: 'Initialien'),
-                                    keyboardType: TextInputType.text,
-                                    maxLength: 2,
-                                    inputFormatters: [
-                                      LengthLimitingTextInputFormatter(2),
-                                    ],
-                                    onSaved: (String val) {
-                                      setState(() {
-                                        _initials = val.trim();
-                                      });
-                                    },
+                                  Container(
+                                    width: 100,
+                                    child: TextFormField(
+                                      initialValue: widget.userData.initials,
+                                      decoration: textInputDecoration.copyWith(labelText: 'Initialien'),
+                                      keyboardType: TextInputType.text,
+                                      maxLength: 2,
+                                      inputFormatters: [
+                                        LengthLimitingTextInputFormatter(2),
+                                      ],
+                                      onSaved: (String val) {
+                                        setState(() {
+                                          _initials = val.trim();
+                                          if (_initials.length > 4) {
+                                            _initials = _initials.substring(0, 3);
+                                          }
+                                        });
+                                      },
+                                    ),
                                   ),
-                                  Divider(thickness: 1.25),
-                                  _createGroup(userData)
+                                  Divider(thickness: 1.25, height: 35),
+                                  _createGroup(widget.userData)
                                 ],
                               ),
                             ),

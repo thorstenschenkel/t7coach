@@ -134,6 +134,7 @@ class _RegisterFormState extends State<RegisterForm> {
   }
 
   _register() async {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState.validate()) {
       setState(() {
         widget.loading(true);

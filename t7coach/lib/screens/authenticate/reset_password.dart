@@ -92,7 +92,7 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   _resetPassword() async {
-
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState.validate()) {
       setState(() {
         // widget.loading(true);

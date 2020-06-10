@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
+import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
 import 'package:t7coach/services/datadase_service.dart';
 import 'package:t7coach/shared/input_constants.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
@@ -30,6 +30,17 @@ class _UserDataFormState extends State<UserDataForm> {
       return ret;
     }
 
+    Widget _createGroup(UserData userData) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+        Text('Trainingsgruppe', style: heading2TextStyle, textAlign: TextAlign.left),
+        SizedBox(height: 10),
+        TextFormField(
+            initialValue: _getInitialValue(userData.initials), // TODO
+            readOnly: true,
+            decoration: _getTextInputDecoration('Gruppenname')),
+      ]);
+    }
+
     return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData,
         builder: (context, snapshot) {
@@ -40,13 +51,13 @@ class _UserDataFormState extends State<UserDataForm> {
                   IconButton(
                     icon: Icon(Icons.edit),
                     onPressed: () {
-                      Navigator.of(context).popAndPushNamed('/user-data-edit-form');
+                      Navigator.of(context).popAndPushNamed('/user-data-edit-form', arguments: userData);
                     },
                   ),
                 ]),
                 body: LoadingOverlay(
                   isLoading: _isLoading,
-                  opacity: 0.1,
+                  opacity: 0.75,
                   progressIndicator: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.secondary),
                   ),
@@ -59,27 +70,24 @@ class _UserDataFormState extends State<UserDataForm> {
                           padding: const EdgeInsets.all(8.0),
                           child: Form(
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 TextFormField(
-                                  initialValue: _getInitialValue(userData.firstName),
-                                  readOnly: true,
-                                  decoration: _getTextInputDecoration('Vorname'),
-                                  keyboardType: TextInputType.text,
-                                ),
+                                    initialValue: _getInitialValue(userData.firstName),
+                                    readOnly: true,
+                                    decoration: _getTextInputDecoration('Vorname')),
                                 SizedBox(height: 5),
                                 TextFormField(
-                                  initialValue: _getInitialValue(userData.lastName),
-                                  readOnly: true,
-                                  decoration: _getTextInputDecoration('Nachname'),
-                                  keyboardType: TextInputType.text,
-                                ),
+                                    initialValue: _getInitialValue(userData.lastName),
+                                    readOnly: true,
+                                    decoration: _getTextInputDecoration('Nachname')),
                                 SizedBox(height: 5),
                                 TextFormField(
-                                  initialValue: _getInitialValue(userData.initials),
-                                  readOnly: true,
-                                  decoration: _getTextInputDecoration('Initialien'),
-                                  keyboardType: TextInputType.text,
-                                )
+                                    initialValue: _getInitialValue(userData.initials),
+                                    readOnly: true,
+                                    decoration: _getTextInputDecoration('Initialien')),
+                                Divider(thickness: 1.25, height: 35),
+                                _createGroup(userData)
                               ],
                             ),
                           ),

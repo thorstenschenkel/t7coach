@@ -1,12 +1,11 @@
 class UserData {
   final String uid;
-  String groupId;
   String firstName = '';
   String lastName = '';
   String initials = '';
   int accountColor;
-
-  // int groupePin = 0;
+  String groupName;
+  String coachGroupName;
 
   UserData({this.uid});
 
@@ -14,13 +13,24 @@ class UserData {
   bool operator ==(other) {
     if (other is UserData) {
       return uid == other.uid &&
-          groupId == other.groupId &&
+          groupName == other.groupName &&
           firstName == other.firstName &&
           lastName == other.lastName &&
           initials == other.initials &&
-          accountColor == other.accountColor;
+          accountColor == other.accountColor &&
+          coachGroupName == other.coachGroupName;
     } else {
       return false;
     }
+  }
+
+  isCoach() {
+    if ( groupName == null || groupName.isEmpty ) {
+      return false;
+    }
+    if ( coachGroupName == null || coachGroupName.isEmpty ) {
+      return false;
+    }
+    return groupName == coachGroupName;
   }
 }

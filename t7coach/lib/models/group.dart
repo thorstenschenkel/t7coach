@@ -1,5 +1,4 @@
 class Group {
-  String id;
   String name;
   String pin;
   String uid;

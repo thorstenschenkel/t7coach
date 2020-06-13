@@ -18,11 +18,12 @@ class DatabaseService {
   Future updateUserData(UserData userData) async {
     try {
       final Map<String, dynamic> data = {
-        'groupId': userData.groupId,
+        'groupName': userData.groupName,
         'firstName': userData.firstName,
         'lastName': userData.lastName,
         'initials': userData.initials,
-        'accountColor': userData.accountColor
+        'accountColor': userData.accountColor,
+        'coachGroupName': userData.coachGroupName
       };
       return await usersCollection.document(uid).setData(data).timeout(Duration(seconds: 20));
     } catch (e) {
@@ -33,11 +34,14 @@ class DatabaseService {
 
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     UserData userData = UserData(uid: uid);
-    userData.groupId = snapshot.data['groupId'];
-    userData.firstName = snapshot.data['firstName'];
-    userData.lastName = snapshot.data['lastName'];
-    userData.initials = snapshot.data['initials'];
-    userData.accountColor = snapshot.data['accountColor'];
+    if ( snapshot.data != null ) {
+      userData.groupName = snapshot.data['groupName'];
+      userData.firstName = snapshot.data['firstName'];
+      userData.lastName = snapshot.data['lastName'];
+      userData.initials = snapshot.data['initials'];
+      userData.accountColor = snapshot.data['accountColor'];
+      userData.coachGroupName = snapshot.data['coachGroupName'];
+    }
     return userData;
   }
 
@@ -48,10 +52,8 @@ class DatabaseService {
   // groupe
   Future updateGroup(Group group) async {
     try {
-      Uuid uuid = new Uuid();
-      group.id = group.id ?? uuid.v1();
       group.uid = group.uid ?? uid;
-      final Map<String, dynamic> data = {'id': group.id, 'name': group.name, 'pin': group.pin, 'uid': group.uid};
+      final Map<String, dynamic> data = {'name': group.name, 'pin': group.pin, 'uid': group.uid};
       return await groupsCollection.document().setData(data);
     } catch (e) {
       print(e.toString());
@@ -61,10 +63,11 @@ class DatabaseService {
 
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
     Group group = Group();
-    group.id = snapshot.data['id'];
-    group.name = snapshot.data['name'];
-    group.pin = snapshot.data['pin'];
-    group.uid = snapshot.data['uid'];
+    if ( snapshot.data != null ) {
+      group.name = snapshot.data['name'];
+      group.pin = snapshot.data['pin'];
+      group.uid = snapshot.data['uid'];
+    }
     return group;
   }
 

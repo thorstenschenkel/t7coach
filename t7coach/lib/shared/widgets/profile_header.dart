@@ -9,7 +9,7 @@ class ProfilHeader extends StatelessWidget {
   ProfilHeader(this.user, this.userData) {}
 
   String getAccountName(UserData userData) {
-    String name = userData.firstName;
+    String name = userData.firstName ?? '';
     name += name.length > 0 && userData.lastName.length > 0 ? ' ' : '';
     name += userData.lastName;
     return name;
@@ -19,11 +19,15 @@ class ProfilHeader extends StatelessWidget {
     return userData.accountColor == null ? Colors.amber : Color(userData.accountColor);
   }
 
+  Color getBackgroundcolorOfaAccountName(UserData userData) {
+    return getAccountName(userData).isEmpty ? Colors.transparent : Colors.red[800];
+  }
+
   @override
   Widget build(BuildContext context) {
     return UserAccountsDrawerHeader(
       accountName: Container(
-        color: Colors.red[800],
+        color: getBackgroundcolorOfaAccountName(userData),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(5,2,5,2),
           child: Text(getAccountName(userData)),

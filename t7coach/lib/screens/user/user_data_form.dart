@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:t7coach/models/group.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
 import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
@@ -16,7 +17,28 @@ class UserDataForm extends StatefulWidget {
 
 class _UserDataFormState extends State<UserDataForm> {
   ScrollController _scrollController = ScrollController();
+  final _groupNameController = TextEditingController();
   bool _isLoading = false;
+  List<Group> groups = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _isLoading = true;
+    DatabaseService(uid: null).getAllGroups().then((allGroups) {
+      setState(() {
+        groups = allGroups;
+      });
+    }).catchError((error) {
+      print('ERROR: can not read groups because of $error');
+    }).whenComplete(() => _isLoading = false);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +57,7 @@ class _UserDataFormState extends State<UserDataForm> {
         Text('Trainingsgruppe', style: heading2TextStyle, textAlign: TextAlign.left),
         SizedBox(height: 10),
         TextFormField(
-            initialValue: _getInitialValue(userData.initials), // TODO
+            initialValue: _getInitialValue(userData.groupName),
             readOnly: true,
             decoration: _getTextInputDecoration('Gruppenname')),
       ]);

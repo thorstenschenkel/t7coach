@@ -35,19 +35,20 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
   String _firstName;
   String _lastName;
   String _initials;
-  String _groupId;
+  String _groupName;
   String _groupPin;
+  String _coachGroupName;
   Color _accountColor;
   bool _pinVisibility;
 
   bool _isGroupPinRequired(UserData userData) {
-    return userData.groupId == null || userData.groupId.isEmpty || _groupId != userData.groupId;
+    return userData.groupName == null || userData.groupName.isEmpty || _groupName != userData.groupName;
   }
 
   @override
   void initState() {
     super.initState();
-    _groupId = widget.userData.groupId;
+    _groupName = widget.userData.groupName;
     _pinVisibility = _isGroupPinRequired(widget.userData);
   }
 
@@ -59,11 +60,12 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     UserData _getNewUserData(UserData userData) {
       _formKey.currentState.save();
       UserData newUserData = UserData(uid: user.uid);
-      newUserData.groupId = _groupId ?? userData.groupId;
+      newUserData.groupName = _groupName ?? userData.groupName;
       newUserData.firstName = (_firstName ?? userData.firstName).trim();
       newUserData.lastName = (_lastName ?? userData.lastName).trim();
       newUserData.initials = (_initials ?? userData.initials).trim();
       newUserData.accountColor = (_accountColor?.value ?? userData.accountColor);
+      newUserData.coachGroupName = _coachGroupName ?? userData.coachGroupName;
       return newUserData;
     }
 
@@ -98,14 +100,14 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     bool _checkPin() {
       bool okay = true;
       if ( _pinVisibility ) {
-        Group group = groups.firstWhere((group) => group.id == _groupId, orElse: null);
+        Group group = groups.firstWhere((group) => group.name == _groupName, orElse: null);
         if ( group == null ) {
           okay = false;
         }
-        okay = group.id == _groupPin;
+        okay = group.pin == _groupPin;
       }
       if ( !okay ) {
-        _setError('Die PIN für Trainingsgruppe ist falsch.');
+        _setError('Die PIN der Trainingsgruppe ist falsch.');
       }
       return okay;
     }
@@ -186,7 +188,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     List<DropdownMenuItem> _createGroupItems() {
       List<DropdownMenuItem> items = [];
       groups.forEach((Group group) {
-        DropdownMenuItem item = DropdownMenuItem(value: group.id, child: Text(group.name));
+        DropdownMenuItem item = DropdownMenuItem(value: group.name, child: Text(group.name));
         items.add(item);
       });
       return items;
@@ -202,12 +204,12 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
             children: <Widget>[
               Expanded(
                 child: DropdownButtonFormField(
-                    value: userData.groupId,
+                    value: userData.groupName,
                     decoration: textInputDecoration.copyWith(labelText: 'Gruppenname'),
                     items: _createGroupItems(),
                     onChanged: (val) {
                       setState(() {
-                        _groupId = val;
+                        _groupName = val;
                         _pinVisibility = _isGroupPinRequired(userData);
                       });
                     },
@@ -216,10 +218,15 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                     }),
               ),
               IconButton(
-                  icon: Icon(Icons.add),
+                  icon: Icon(Icons.group_add),
                   onPressed: () async {
-                    await Navigator.pushNamed(context, '/group-form');
-                    setState(() {});
+                    dynamic newGroupName = await Navigator.pushNamed(context, '/group-form');
+                    setState(() {
+                      if ( newGroupName != null ) {
+                        _coachGroupName = newGroupName;
+                        _groupName = _coachGroupName;
+                      }
+                    });
                   }),
             ],
           ),
@@ -229,7 +236,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
             child: Container(
               width: 175,
               child: TextFormField(
-                  onSaved: (String val) {
+                  onChanged: (String val) {
                     setState(() {
                       _groupPin = val;
                       if (_groupPin.length > 4) {
@@ -244,7 +251,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                   maxLength: 4,
                   inputFormatters: [WhitelistingTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
                   textInputAction: TextInputAction.next,
-                  decoration: textInputDecoration.copyWith(labelText: 'PIN'),
+                  decoration: textInputDecoration.copyWith(labelText: 'Gruppen-PIN'),
                   validator: (String val) {
                     return val.isEmpty || val.length < 4 ? 'Bitte gib eine PIN\nmit vier Ziffern ein.' : null;
                   }),
@@ -315,7 +322,10 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
-                          buildErrorBox(),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: buildErrorBox(),
+                          ),
                           _createHeader(widget.userData),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -360,8 +370,8 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                                       onSaved: (String val) {
                                         setState(() {
                                           _initials = val.trim();
-                                          if (_initials.length > 4) {
-                                            _initials = _initials.substring(0, 3);
+                                          if (_initials.length > 2) {
+                                            _initials = _initials.substring(0, 1);
                                           }
                                         });
                                       },

@@ -3,8 +3,10 @@ import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
+import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
 import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/services/datadase_service.dart';
+import 'package:t7coach/shared/widgets/full_screen_error_widget.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
 import 'package:t7coach/shared/widgets/profile_header.dart';
 
@@ -41,61 +43,98 @@ class Home extends StatelessWidget {
       showAboutDialog(context: context, applicationName: name, applicationVersion: version);
     }
 
+    print('user ${user.uid}');
+
     return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            UserData userData = snapshot.data;
-            return Scaffold(
-              appBar: new AppBar(
-                elevation: 0,
-              ),
-              drawer: new Drawer(
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      child: ListView(
-                        children: <Widget>[
-                          ProfilHeader(user, userData),
-                          ListTile(
-                            title: Text('Profil'),
-                            leading: Icon(Icons.account_box),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pushNamed('/user-data-form');
-                            },
-                          ),
-                          Divider(thickness: 2, height: 2),
-                          ListTile(
-                            title: Text('About'),
-                            leading: Icon(Icons.info_outline),
-                            onTap: () async {
-                              _showAbout();
-                            },
-                          )
-                        ],
+          if (!snapshot.hasError) {
+            print('snapshot ${snapshot.hasData}');
+            if (snapshot.hasData) {
+              UserData userData = snapshot.data;
+              return Scaffold(
+                appBar: new AppBar(
+                  elevation: 0,
+                  title: Text( 'T7 Coach')
+                ),
+                drawer: new Drawer(
+                  child: Column(
+                    children: <Widget>[
+                      Expanded(
+                        child: ListView(
+                          children: <Widget>[
+                            ProfilHeader(user, userData),
+                            ListTile(
+                              title: Text('Profil'),
+                              leading: Icon(Icons.account_box),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushNamed('/user-data-form');
+                              },
+                            ),
+                            Visibility(
+                              visible: userData.isCoach(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Divider(thickness: 2, height: 2),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text('Trainer', style: heading3TextStyle, textAlign: TextAlign.left),
+                                  ),
+                                  ListTile(
+                                    title: Text('Trainingseinheit erstellen'),
+                                    leading: Icon(Icons.add),
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      // Navigator.of(context).pushNamed('/user-data-form');
+                                    },
+                                  ),
+                                  ListTile(
+                                    title: Text('Trainingsgruppe bearbeiten'),
+                                    leading: Icon(Icons.edit), // group_add + edit
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      // Navigator.of(context).pushNamed('/user-data-form');
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Divider(thickness: 2, height: 2),
+                            ListTile(
+                              title: Text('About'),
+                              leading: Icon(Icons.info_outline),
+                              onTap: () async {
+                                _showAbout();
+                              },
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                    _createDrawerFooter()
-                  ],
+                      _createDrawerFooter()
+                    ],
+                  ),
                 ),
-              ),
-              body: Container(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 50),
-                    RaisedButton(
-                      onPressed: () async {
-                        await _signOut();
-                      },
-                      child: Text('Abmelden'),
-                    )
-                  ],
+                body: Container(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 50),
+                      RaisedButton(
+                        onPressed: () async {
+                          await _signOut();
+                        },
+                        child: Text('Abmelden'),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              return Loading();
+            }
           } else {
-            return Loading();
+            return FillScreenErrorWidget(title: null, message: 'Daten des Profils können nicht gelesen werden');
           }
         });
   }

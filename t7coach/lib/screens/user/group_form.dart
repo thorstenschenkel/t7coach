@@ -104,7 +104,7 @@ class _GroupFormState extends State<GroupForm> {
         setState(() {
           _isLoading = false;
         });
-        Navigator.of(context).pop(newGroup.id);
+        Navigator.of(context).pop(newGroup.name);
       } else {
         _scrollToTop();
       }
@@ -194,7 +194,7 @@ class _GroupFormState extends State<GroupForm> {
                                   LengthLimitingTextInputFormatter(4)
                                 ],
                                 textInputAction: TextInputAction.next,
-                                decoration: textInputDecoration.copyWith(labelText: 'PIN'),
+                                decoration: textInputDecoration.copyWith(labelText: 'Gruppen-PIN'),
                                 validator: (String val) {
                                   print( val );
                                   return val.isEmpty || val.length < 4

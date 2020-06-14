@@ -11,6 +11,7 @@ import 'package:t7coach/services/datadase_service.dart';
 import 'package:t7coach/shared/dialogs/color_picker_dialog_util.dart';
 import 'package:t7coach/shared/dialogs/discard_changes_dialog_util.dart';
 import 'package:t7coach/shared/input_constants.dart';
+import 'package:t7coach/shared/widgets/full_screen_error_widget.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
 
 class UserDataEditForm extends StatefulWidget {
@@ -51,7 +52,6 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     _groupName = widget.userData.groupName;
     _pinVisibility = _isGroupPinRequired(widget.userData);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -96,17 +96,16 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       });
     }
 
-
     bool _checkPin() {
       bool okay = true;
-      if ( _pinVisibility ) {
+      if (_pinVisibility) {
         Group group = groups.firstWhere((group) => group.name == _groupName, orElse: null);
-        if ( group == null ) {
+        if (group == null) {
           okay = false;
         }
         okay = group.pin == _groupPin;
       }
-      if ( !okay ) {
+      if (!okay) {
         _setError('Die PIN der Trainingsgruppe ist falsch.');
       }
       return okay;
@@ -118,7 +117,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
         _autoValidate = true;
       });
       if (_formKey.currentState.validate()) {
-        if ( !_checkPin()) {
+        if (!_checkPin()) {
           return;
         }
         setState(() {
@@ -220,9 +219,9 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
               IconButton(
                   icon: Icon(Icons.group_add),
                   onPressed: () async {
-                    dynamic newGroupName = await Navigator.pushNamed(context, '/group-form');
+                    dynamic newGroupName = await Navigator.pushNamed(context, '/add-group-form');
                     setState(() {
-                      if ( newGroupName != null ) {
+                      if (newGroupName != null) {
                         _coachGroupName = newGroupName;
                         _groupName = _coachGroupName;
                       }
@@ -296,100 +295,104 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
     return StreamBuilder<List<Group>>(
         stream: DatabaseService(uid: user.uid).groups,
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            groups = snapshot.data;
-            return WillPopScope(
-              onWillPop: () async {
-                return await _onWillPop(widget.userData);
-              },
-              child: Scaffold(
-                  appBar: AppBar(title: Text('Profil berabeiten'), elevation: 0, actions: [
-                    IconButton(
-                      icon: Icon(Icons.check),
-                      onPressed: () {
-                        _save(widget.userData);
-                      },
-                    ),
-                  ]),
-                  body: LoadingOverlay(
-                    isLoading: _isLoading,
-                    opacity: 0.75,
-                    progressIndicator: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.secondary),
-                    ),
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: buildErrorBox(),
-                          ),
-                          _createHeader(widget.userData),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Form(
-                              key: _formKey,
-                              autovalidate: _autoValidate,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  TextFormField(
-                                    initialValue: widget.userData.firstName,
-                                    decoration: textInputDecoration.copyWith(labelText: 'Vorname'),
-                                    keyboardType: TextInputType.text,
-                                    onSaved: (String val) {
-                                      setState(() {
-                                        _firstName = val.trim();
-                                      });
-                                    },
-                                  ),
-                                  SizedBox(height: 5),
-                                  TextFormField(
-                                    initialValue: widget.userData.lastName,
-                                    decoration: textInputDecoration.copyWith(labelText: 'Nachname'),
-                                    keyboardType: TextInputType.text,
-                                    onSaved: (String val) {
-                                      setState(() {
-                                        _lastName = val.trim();
-                                      });
-                                    },
-                                  ),
-                                  SizedBox(height: 5),
-                                  Container(
-                                    width: 100,
-                                    child: TextFormField(
-                                      initialValue: widget.userData.initials,
-                                      decoration: textInputDecoration.copyWith(labelText: 'Initialien'),
+          if (!snapshot.hasError) {
+            if (snapshot.hasData) {
+              groups = snapshot.data;
+              return WillPopScope(
+                onWillPop: () async {
+                  return await _onWillPop(widget.userData);
+                },
+                child: Scaffold(
+                    appBar: AppBar(title: Text('Profil berabeiten'), elevation: 0, actions: [
+                      IconButton(
+                        icon: Icon(Icons.check),
+                        onPressed: () {
+                          _save(widget.userData);
+                        },
+                      ),
+                    ]),
+                    body: LoadingOverlay(
+                      isLoading: _isLoading,
+                      opacity: 0.75,
+                      progressIndicator: CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.secondary),
+                      ),
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: buildErrorBox(),
+                            ),
+                            _createHeader(widget.userData),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Form(
+                                key: _formKey,
+                                autovalidate: _autoValidate,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    TextFormField(
+                                      initialValue: widget.userData.firstName,
+                                      decoration: textInputDecoration.copyWith(labelText: 'Vorname'),
                                       keyboardType: TextInputType.text,
-                                      maxLength: 2,
-                                      inputFormatters: [
-                                        LengthLimitingTextInputFormatter(2),
-                                      ],
                                       onSaved: (String val) {
                                         setState(() {
-                                          _initials = val.trim();
-                                          if (_initials.length > 2) {
-                                            _initials = _initials.substring(0, 1);
-                                          }
+                                          _firstName = val.trim();
                                         });
                                       },
                                     ),
-                                  ),
-                                  Divider(thickness: 1.25, height: 35),
-                                  _createGroup(widget.userData)
-                                ],
+                                    SizedBox(height: 5),
+                                    TextFormField(
+                                      initialValue: widget.userData.lastName,
+                                      decoration: textInputDecoration.copyWith(labelText: 'Nachname'),
+                                      keyboardType: TextInputType.text,
+                                      onSaved: (String val) {
+                                        setState(() {
+                                          _lastName = val.trim();
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(height: 5),
+                                    Container(
+                                      width: 100,
+                                      child: TextFormField(
+                                        initialValue: widget.userData.initials,
+                                        decoration: textInputDecoration.copyWith(labelText: 'Initialien'),
+                                        keyboardType: TextInputType.text,
+                                        maxLength: 2,
+                                        inputFormatters: [
+                                          LengthLimitingTextInputFormatter(2),
+                                        ],
+                                        onSaved: (String val) {
+                                          setState(() {
+                                            _initials = val.trim();
+                                            if (_initials.length > 2) {
+                                              _initials = _initials.substring(0, 1);
+                                            }
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    Divider(thickness: 1.25, height: 35),
+                                    _createGroup(widget.userData)
+                                  ],
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  )),
-            );
+                    )),
+              );
+            } else {
+              return Loading();
+            }
           } else {
-            return Loading();
+            return FillScreenErrorWidget(title: null, message: 'Daten der Gruppen können nicht gelesen werden');
           }
         });
   }

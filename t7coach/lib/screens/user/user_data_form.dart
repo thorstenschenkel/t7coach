@@ -17,7 +17,6 @@ class UserDataForm extends StatefulWidget {
 
 class _UserDataFormState extends State<UserDataForm> {
   ScrollController _scrollController = ScrollController();
-  final _groupNameController = TextEditingController();
   bool _isLoading = false;
   List<Group> groups = [];
 

@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:t7coach/models/db_error.dart';
 import 'package:t7coach/models/group.dart';
 import 'package:t7coach/models/user_data.dart';
-import 'package:uuid/uuid.dart';
 
 class DatabaseService {
   final String uid;
@@ -34,7 +33,7 @@ class DatabaseService {
 
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     UserData userData = UserData(uid: uid);
-    if ( snapshot.data != null ) {
+    if (snapshot.data != null) {
       userData.groupName = snapshot.data['groupName'];
       userData.firstName = snapshot.data['firstName'];
       userData.lastName = snapshot.data['lastName'];
@@ -53,7 +52,12 @@ class DatabaseService {
   Future updateGroup(Group group) async {
     try {
       group.uid = group.uid ?? uid;
-      final Map<String, dynamic> data = {'name': group.name, 'pin': group.pin, 'uid': group.uid};
+      final Map<String, dynamic> data = {
+        'name': group.name,
+        'pin': group.pin,
+        'uid': group.uid,
+        'levels': group.levels
+      };
       return await groupsCollection.document().setData(data);
     } catch (e) {
       print(e.toString());
@@ -63,10 +67,15 @@ class DatabaseService {
 
   Group _groupFromSnapshot(DocumentSnapshot snapshot) {
     Group group = Group();
-    if ( snapshot.data != null ) {
+    if (snapshot.data != null) {
       group.name = snapshot.data['name'];
       group.pin = snapshot.data['pin'];
       group.uid = snapshot.data['uid'];
+      if (snapshot.data['levels'] != null) {
+        group.levels = List.castFrom<dynamic, String>(snapshot.data['levels']);
+      } else {
+        group.levels = [];
+      }
     }
     return group;
   }

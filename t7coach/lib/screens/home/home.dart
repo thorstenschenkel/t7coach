@@ -49,7 +49,6 @@ class Home extends StatelessWidget {
         stream: DatabaseService(uid: user.uid).userData,
         builder: (context, snapshot) {
           if (!snapshot.hasError) {
-            print('snapshot ${snapshot.hasData}');
             if (snapshot.hasData) {
               UserData userData = snapshot.data;
               return Scaffold(
@@ -72,6 +71,14 @@ class Home extends StatelessWidget {
                                 Navigator.of(context).pushNamed('/user-data-form');
                               },
                             ),
+                            ListTile(
+                              title: Text('Trainingsgruppe'),
+                              leading: Icon(Icons.group),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pushNamed('/group-form', arguments: userData);
+                              },
+                            ),
                             Visibility(
                               visible: userData.isCoach(),
                               child: Column(
@@ -85,14 +92,6 @@ class Home extends StatelessWidget {
                                   ListTile(
                                     title: Text('Trainingseinheit erstellen'),
                                     leading: Icon(Icons.add),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      // Navigator.of(context).pushNamed('/user-data-form');
-                                    },
-                                  ),
-                                  ListTile(
-                                    title: Text('Trainingsgruppe bearbeiten'),
-                                    leading: Icon(Icons.edit), // group_add + edit
                                     onTap: () {
                                       Navigator.of(context).pop();
                                       // Navigator.of(context).pushNamed('/user-data-form');

@@ -48,6 +48,34 @@ class DatabaseService {
     return usersCollection.document(uid).snapshots().map(_userDataFromSnapshot);
   }
 
+  Future getCoachByCoachGroupName(String name) async {
+    try {
+      QuerySnapshot snapshot = await usersCollection.where('coachGroupName', isEqualTo: name).getDocuments();
+      if (snapshot.documents.first != null) {
+        return _userDataFromSnapshot(snapshot.documents.first);
+      }
+      return null;
+    } catch (e) {
+      print(e.toString());
+      return _exceptionToError(e, 'Fehler beim Lesen des Trainers');
+    }
+  }
+
+  Future getUserDataByGroupName(String name) async {
+    try {
+      QuerySnapshot snapshot = await usersCollection.where('groupName', isEqualTo: name).getDocuments();
+      List<UserData> athletes = [];
+      snapshot.documents.forEach((DocumentSnapshot snapshot) {
+        UserData userData = _userDataFromSnapshot(snapshot);
+        athletes.add(userData);
+      });
+      return athletes;
+    } catch (e) {
+      print(e.toString());
+      return _exceptionToError(e, 'Fehler beim Lesen der Athleten');
+    }
+  }
+
   // groupe
   Future updateGroup(Group group) async {
     try {

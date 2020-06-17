@@ -25,12 +25,32 @@ class UserData {
   }
 
   isCoach() {
-    if ( groupName == null || groupName.isEmpty ) {
+    if (groupName == null || groupName.isEmpty) {
       return false;
     }
-    if ( coachGroupName == null || coachGroupName.isEmpty ) {
+    if (coachGroupName == null || coachGroupName.isEmpty) {
       return false;
     }
     return groupName == coachGroupName;
+  }
+
+  String getFullName() {
+    String name = this.firstName ?? '';
+    name += name.length > 0 && this.lastName.length > 0 ? ' ' : '';
+    name += this.lastName;
+    return name;
+  }
+
+  bool isFullNameEmpty() {
+    String name = this.getFullName();
+    return name == null || name.isEmpty;
+  }
+
+  String getFirstOrLastname() {
+    if (firstName != null && firstName.isNotEmpty) {
+      return firstName;
+    } else {
+      return lastName;
+    }
   }
 }

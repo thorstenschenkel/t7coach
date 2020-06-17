@@ -8,29 +8,22 @@ class ProfilHeader extends StatelessWidget {
 
   ProfilHeader(this.user, this.userData) {}
 
-  String getAccountName(UserData userData) {
-    String name = userData.firstName ?? '';
-    name += name.length > 0 && userData.lastName.length > 0 ? ' ' : '';
-    name += userData.lastName;
-    return name;
-  }
-
   Color getCircleColor(UserData userData) {
     return userData.accountColor == null ? Colors.amber : Color(userData.accountColor);
   }
 
-  Color getBackgroundcolorOfaAccountName(UserData userData) {
-    return getAccountName(userData).isEmpty ? Colors.transparent : Colors.red[800];
+  Color getBackgroundcolorOfAccountName(UserData userData) {
+    return userData.isFullNameEmpty() ? Colors.transparent : Colors.red[800];
   }
 
   @override
   Widget build(BuildContext context) {
     return UserAccountsDrawerHeader(
       accountName: Container(
-        color: getBackgroundcolorOfaAccountName(userData),
+        color: getBackgroundcolorOfAccountName(userData),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(5,2,5,2),
-          child: Text(getAccountName(userData)),
+          padding: const EdgeInsets.fromLTRB(5, 2, 5, 2),
+          child: Text(userData.getFullName()),
         ),
       ),
       accountEmail: Container(

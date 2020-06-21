@@ -29,6 +29,8 @@ class _GroupFormState extends State<GroupForm> {
   bool _isLoadingAthletes = true;
   bool _isLoadingCoachName = true;
   bool _visibilityError = false;
+  bool _updateCoachFailed = false;
+  bool _updateAthletesFailed = false;
   String error;
   List<Group> groups;
   Group group;
@@ -76,10 +78,14 @@ class _GroupFormState extends State<GroupForm> {
   }
 
   void _updateCoachName(User user, Group group) {
+    if (_updateCoachFailed) {
+      return;
+    }
     DatabaseService(uid: user.uid).getCoachByCoachGroupName(group.name).then((result) {
       if (result is DbError) {
         print(result.errorText);
         _setError(result.errorText);
+        _updateAthletesFailed = true;
       } else if (result is UserData && result.isCoach()) {
         String newCoachName = result.firstName ?? '';
         newCoachName += newCoachName.isNotEmpty ? ' ' : '';
@@ -93,11 +99,13 @@ class _GroupFormState extends State<GroupForm> {
         }
       } else {
         print(result);
-        _setError('Fehler beim Lesen des Namens des Trainers');
+        _setError('Fehler beim Lesen des Namens des Trainers #0002');
+        _updateCoachFailed = true;
       }
     }).catchError((e) {
       print(e);
-      _setError('Fehler beim Lesen des Namens des Trainers');
+      _setError('Fehler beim Lesen des Namens des Trainers #0003');
+      _updateCoachFailed = true;
     }).whenComplete(() {
       _isLoadingCoachName = false;
       updateLoading();
@@ -105,10 +113,14 @@ class _GroupFormState extends State<GroupForm> {
   }
 
   void _updateAthletes(User user, Group group) {
+    if (_updateAthletesFailed) {
+      return;
+    }
     DatabaseService(uid: user.uid).getUserDataByGroupName(group.name).then((result) {
       if (result is DbError) {
         print(result.errorText);
         _setError(result.errorText);
+        _updateAthletesFailed = true;
       } else if (result is List<UserData>) {
         if (!listEquals(result, athletes)) {
           setState(() {
@@ -117,11 +129,13 @@ class _GroupFormState extends State<GroupForm> {
         }
       } else {
         print(result);
-        _setError('Fehler beim Lesen der Athleten');
+        _setError('Fehler beim Lesen der Athleten #0002');
+        _updateAthletesFailed = true;
       }
     }).catchError((e) {
       print(e);
-      _setError('Fehler beim Lesen der Athleten');
+      _setError('Fehler beim Lesen der Athleten #0003');
+      _updateAthletesFailed = true;
     }).whenComplete(() {
       _isLoadingAthletes = false;
       updateLoading();

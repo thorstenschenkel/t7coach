@@ -90,11 +90,11 @@ class Home extends StatelessWidget {
                                     child: Text('Trainer', style: heading3TextStyle, textAlign: TextAlign.left),
                                   ),
                                   ListTile(
-                                    title: Text('Trainingseinheit erstellen'),
+                                    title: Text('Neue Trainingseinheit'),
                                     leading: Icon(Icons.add),
                                     onTap: () {
                                       Navigator.of(context).pop();
-                                      // Navigator.of(context).pushNamed('/user-data-form');
+                                      Navigator.of(context).pushNamed('/add-training');
                                     },
                                   ),
                                 ],

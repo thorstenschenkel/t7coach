@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:t7coach/screens/authenticate/reset_password.dart';
 import 'package:t7coach/screens/home/home.dart';
+import 'package:t7coach/screens/training/training_add_form.dart';
 import 'package:t7coach/screens/user/add_group_form.dart';
 import 'package:t7coach/screens/user/group_form.dart';
 import 'package:t7coach/screens/user/user_data_edit_form.dart';
@@ -21,8 +23,8 @@ class MyApp extends StatelessWidget {
     return StreamProvider<User>.value(
         value: AuthService().user,
         child: MaterialApp(
-          title: 'T7 Coach',
-          theme: MaterialThemeData.themeData,
+            title: 'T7 Coach',
+            theme: MaterialThemeData.themeData,
 //      theme: ThemeData(
 //        // This is the theme of your application.
 //        //
@@ -44,18 +46,28 @@ class MyApp extends StatelessWidget {
 ////          .secondary-text-color { color: #757575; }
 ////          .divider-color { border-color: #BDBDBD; }
 //      ),
-          initialRoute: '/',
-          routes: {
-            '/': (context) => Wrapper(),
-            '/home': (context) => Home(),
-            // AUTH
-            '/reset-password': (context) => ResetPassword(),
-            // USER
-            '/user-data-form': (context) => UserDataForm(),
-            '/user-data-edit-form': (context) => UserDataEditForm(ModalRoute.of(context).settings.arguments),
-            '/add-group-form': (context) => AddGroupForm(),
-            '/group-form': (context) => GroupForm(ModalRoute.of(context).settings.arguments),
-          },
-        ));
+            initialRoute: '/',
+            routes: {
+              '/': (context) => Wrapper(),
+              '/home': (context) => Home(),
+              // AUTH
+              '/reset-password': (context) => ResetPassword(),
+              // USER
+              '/user-data-form': (context) => UserDataForm(),
+              '/user-data-edit-form': (context) => UserDataEditForm(ModalRoute.of(context).settings.arguments),
+              '/add-group-form': (context) => AddGroupForm(),
+              '/group-form': (context) => GroupForm(ModalRoute.of(context).settings.arguments),
+              // TRAINING
+              '/add-training': (context) => TrainingAddForm(),
+            },
+            localizationsDelegates: [
+              // ApplicationLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: [
+              const Locale('en', 'US'), // English
+              const Locale('de', 'DE'), // German
+            ]));
   }
 }

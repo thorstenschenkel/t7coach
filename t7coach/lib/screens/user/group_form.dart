@@ -77,16 +77,20 @@ class _GroupFormState extends State<GroupForm> {
     return chips;
   }
 
+  bool _isCoach(User user, Group group) {
+    return group.uid == user.uid;
+  }
+
   void _updateCoachName(User user, Group group) {
     if (_updateCoachFailed) {
       return;
     }
-    DatabaseService(uid: user.uid).getCoachByCoachGroupName(group.name).then((result) {
+    DatabaseService(uid: user.uid).getUserData().then((result) {
       if (result is DbError) {
         print(result.errorText);
         _setError(result.errorText);
         _updateAthletesFailed = true;
-      } else if (result is UserData && result.isCoach()) {
+      } else if (result is UserData && _isCoach(user, group)) {
         String newCoachName = result.firstName ?? '';
         newCoachName += newCoachName.isNotEmpty ? ' ' : '';
         newCoachName += result.lastName ?? '';
@@ -194,7 +198,7 @@ class _GroupFormState extends State<GroupForm> {
                 child: Scaffold(
                     appBar: AppBar(title: Text('Traingsgruppe'), elevation: 0, actions: [
                       Visibility(
-                        visible: widget.userData.isCoach(),
+                        visible: _isCoach(user, group),
                         child: IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {},
@@ -230,15 +234,16 @@ class _GroupFormState extends State<GroupForm> {
                                   Visibility(
                                       visible: group?.levels != null && group.levels.length > 0,
                                       child: Column(
-                                        children: <Widget>[
-                                          Text('Leistungslevels', style: heading2TextStyle, textAlign: TextAlign.left),
-                                          Wrap(
-                                            spacing: 5,
-                                            runSpacing: 5,
-                                            children: _getLevelChips(),
-                                          )
-                                        ],
-                                      ))
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text('Leistungslevels', style: heading2TextStyle, textAlign: TextAlign.left),
+                                      Wrap(
+                                        spacing: 5,
+                                        runSpacing: 5,
+                                        children: _getLevelChips(),
+                                      )
+                                    ],
+                                  ))
                                 ],
                               ))
                         ]))),

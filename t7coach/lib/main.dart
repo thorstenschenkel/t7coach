@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
               '/add-group-form': (context) => AddGroupForm(),
               '/group-form': (context) => GroupForm(ModalRoute.of(context).settings.arguments),
               // TRAINING
-              '/add-training': (context) => TrainingAddForm(),
+              '/add-training': (context) => TrainingAddForm(ModalRoute.of(context).settings.arguments),
             },
             localizationsDelegates: [
               // ApplicationLocalizations.delegate,

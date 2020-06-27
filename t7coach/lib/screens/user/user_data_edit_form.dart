@@ -65,7 +65,6 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       newUserData.lastName = (_lastName ?? userData.lastName).trim();
       newUserData.initials = (_initials ?? userData.initials).trim();
       newUserData.accountColor = (_accountColor?.value ?? userData.accountColor);
-      newUserData.coachGroupName = _coachGroupName ?? userData.coachGroupName;
       return newUserData;
     }
 

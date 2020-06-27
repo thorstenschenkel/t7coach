@@ -5,7 +5,6 @@ class UserData {
   String initials = '';
   int accountColor;
   String groupName;
-  String coachGroupName;
 
   UserData({this.uid});
 
@@ -17,21 +16,10 @@ class UserData {
           firstName == other.firstName &&
           lastName == other.lastName &&
           initials == other.initials &&
-          accountColor == other.accountColor &&
-          coachGroupName == other.coachGroupName;
+          accountColor == other.accountColor;
     } else {
       return false;
     }
-  }
-
-  isCoach() {
-    if (groupName == null || groupName.isEmpty) {
-      return false;
-    }
-    if (coachGroupName == null || coachGroupName.isEmpty) {
-      return false;
-    }
-    return groupName == coachGroupName;
   }
 
   String getFullName() {

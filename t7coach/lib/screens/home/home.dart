@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:t7coach/models/db_error.dart';
+import 'package:t7coach/models/group.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
 import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
@@ -10,7 +12,14 @@ import 'package:t7coach/shared/widgets/full_screen_error_widget.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
 import 'package:t7coach/shared/widgets/profile_header.dart';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  bool _trainerVisibility = false;
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -43,7 +52,26 @@ class Home extends StatelessWidget {
       showAboutDialog(context: context, applicationName: name, applicationVersion: version);
     }
 
-    print('user ${user.uid}');
+    void _updateTrainerVisibility(UserData userData) async {
+      if (userData?.groupName != null) {
+        dynamic getResult = await DatabaseService(uid: user.uid).getGroupsByName(userData.groupName);
+        if (getResult is DbError) {
+          print('DbError: ${getResult.errorText}');
+          return;
+        }
+        if (getResult is List) {
+          if (getResult.length <= 0) {
+            print('No group found!');
+            return;
+          } else {
+            Group group = getResult[0];
+            setState(() {
+              _trainerVisibility = group.uid == user.uid;
+            });
+          }
+        }
+      }
+    }
 
     return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData,
@@ -51,10 +79,11 @@ class Home extends StatelessWidget {
           if (!snapshot.hasError) {
             if (snapshot.hasData) {
               UserData userData = snapshot.data;
+              _updateTrainerVisibility(userData);
               return Scaffold(
                 appBar: new AppBar(
-                  elevation: 0,
-                  title: Text( 'T7 Coach')
+                    elevation: 0,
+                    title: Text('T7 Coach')
                 ),
                 drawer: new Drawer(
                   child: Column(
@@ -80,7 +109,7 @@ class Home extends StatelessWidget {
                               },
                             ),
                             Visibility(
-                              visible: userData.isCoach(),
+                              visible: _trainerVisibility,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
@@ -94,7 +123,7 @@ class Home extends StatelessWidget {
                                     leading: Icon(Icons.add),
                                     onTap: () {
                                       Navigator.of(context).pop();
-                                      Navigator.of(context).pushNamed('/add-training');
+                                      Navigator.of(context).pushNamed('/add-training', arguments: userData);
                                     },
                                   ),
                                 ],

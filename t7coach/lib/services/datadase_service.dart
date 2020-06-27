@@ -22,7 +22,6 @@ class DatabaseService {
         'lastName': userData.lastName,
         'initials': userData.initials,
         'accountColor': userData.accountColor,
-        'coachGroupName': userData.coachGroupName
       };
       return await usersCollection.document(uid).setData(data).timeout(Duration(seconds: 20));
     } catch (e) {
@@ -39,7 +38,6 @@ class DatabaseService {
       userData.lastName = snapshot.data['lastName'];
       userData.initials = snapshot.data['initials'];
       userData.accountColor = snapshot.data['accountColor'];
-      userData.coachGroupName = snapshot.data['coachGroupName'];
     }
     return userData;
   }
@@ -48,16 +46,16 @@ class DatabaseService {
     return usersCollection.document(uid).snapshots().map(_userDataFromSnapshot);
   }
 
-  Future getCoachByCoachGroupName(String name) async {
+  Future getUserData() async {
     try {
-      QuerySnapshot snapshot = await usersCollection.where('coachGroupName', isEqualTo: name).getDocuments();
-      if (snapshot.documents.first != null) {
-        return _userDataFromSnapshot(snapshot.documents.first);
+      DocumentSnapshot snapshot = await usersCollection.document(uid).get();
+      if (snapshot != null) {
+        return _userDataFromSnapshot(snapshot);
       }
       return null;
     } catch (e) {
       print(e.toString());
-      return _exceptionToError(e, 'Fehler beim Lesen des Trainers');
+      return _exceptionToError(e, 'Fehler beim Lesen des Trainers/Athleten');
     }
   }
 

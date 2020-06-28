@@ -11,6 +11,7 @@ import 'package:t7coach/screens/training/endurance_run_form.dart';
 import 'package:t7coach/screens/training/speed_runs_form.dart';
 import 'package:t7coach/services/datadase_service.dart';
 import 'package:t7coach/shared/input_constants.dart';
+import 'package:t7coach/shared/widgets/animated_floatactionbuttons.dart';
 import 'package:t7coach/shared/widgets/error_box_widget.dart';
 import 'package:t7coach/shared/widgets/full_screen_error_widget.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
@@ -35,6 +36,7 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
   List<Group> groups;
   Group group;
   List<Widget> trainingWidgets = [];
+  List<Widget> fbaSubButtons = [];
 
   // form values
   String _dateString;
@@ -72,13 +74,24 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
     if (_trainingType != null) {
       switch (_trainingType) {
         case TrainingType.SPEED_RUNS:
-          trainingWidgets.add(SpeedRunsFrom());
+          SpeedRunsForm widget = SpeedRunsForm();
+          trainingWidgets.add(widget);
+          setState(() {
+            fbaSubButtons = widget.getFloatingActionButtonSubMenu();
+          });
           break;
         case TrainingType.ENDURANCE_RUN:
-          trainingWidgets.add(EnduranceRunFrom());
+          EnduranceRunFrom widget = EnduranceRunFrom();
+          trainingWidgets.add(widget);
+          setState(() {
+            fbaSubButtons = widget.getFloatingActionButtonSubMenu();
+          });
           break;
         default:
           print('unsupported trainings type: $_trainingType');
+          setState(() {
+            fbaSubButtons.clear();
+          });
           break;
       }
     }
@@ -206,11 +219,15 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
                                     )
                                   ])),
                             ))),
-                    floatingActionButton: FloatingActionButton(
-                      onPressed: () {
-                        // Add your onPressed code here!
-                      },
-                      child: Icon(Icons.add),
+                    floatingActionButton: Visibility(
+                      visible: fbaSubButtons.length > 0,
+                      child: AnimatedFloatingActionButton(
+                          fabButtons: fbaSubButtons,
+                          colorStartAnimation: Colors.blue,
+                          colorEndAnimation: Colors.red,
+                          animatedIconData: AnimatedIcons.menu_close,
+                          tooltip: 'Hinzufügen'
+                      ),
                     ),
                   ));
             } else {

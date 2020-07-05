@@ -37,6 +37,7 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
   Group group;
   List<Widget> trainingWidgets = [];
   List<Widget> fbaSubButtons = [];
+  AnimatedFloatingActionButton animatedFab;
 
   // form values
   String _dateString;
@@ -69,19 +70,19 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
     return items;
   }
 
-  _updateTraining() {
+  _updateTraining(Function scrollToEnd) {
     trainingWidgets.clear();
     if (_trainingType != null) {
       switch (_trainingType) {
         case TrainingType.SPEED_RUNS:
-          SpeedRunsForm widget = SpeedRunsForm();
+          SpeedRunsForm widget = SpeedRunsForm(scrollToEnd: scrollToEnd);
           trainingWidgets.add(widget);
           setState(() {
             fbaSubButtons = widget.getFloatingActionButtonSubMenu();
           });
           break;
         case TrainingType.ENDURANCE_RUN:
-          EnduranceRunFrom widget = EnduranceRunFrom();
+          EnduranceRunFrom widget = EnduranceRunFrom(scrollToEnd: scrollToEnd);
           trainingWidgets.add(widget);
           setState(() {
             fbaSubButtons = widget.getFloatingActionButtonSubMenu();
@@ -104,6 +105,10 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
 
     Future<bool> _onWillPop(UserData userData) async {
       return true;
+    }
+
+    void scrollToEnd() {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
 
     return StreamBuilder<List<Group>>(
@@ -207,7 +212,7 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
                                         onChanged: (val) {
                                           setState(() {
                                             _trainingType = val;
-                                            _updateTraining();
+                                            _updateTraining(scrollToEnd);
                                           });
                                         },
                                         validator: (val) {
@@ -215,19 +220,19 @@ class _TrainingAddFormState extends State<TrainingAddForm> {
                                         }),
                                     divider,
                                     Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: trainingWidgets,
                                     )
                                   ])),
                             ))),
                     floatingActionButton: Visibility(
                       visible: fbaSubButtons.length > 0,
-                      child: AnimatedFloatingActionButton(
+                      child: animatedFab = AnimatedFloatingActionButton(
                           fabButtons: fbaSubButtons,
-                          colorStartAnimation: Colors.blue,
-                          colorEndAnimation: Colors.red,
+                          colorStartAnimation: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+                          colorEndAnimation: Theme.of(context).primaryColor,
                           animatedIconData: AnimatedIcons.menu_close,
-                          tooltip: 'Hinzufügen'
-                      ),
+                          tooltip: 'Hinzufügen'),
                     ),
                   ));
             } else {

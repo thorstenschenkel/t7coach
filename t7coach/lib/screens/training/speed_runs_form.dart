@@ -1,9 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:t7coach/screens/training/details/speed_run_form.dart';
+import 'details/note_form.dart';
+import 'file:///C:/develop/flutterApps/t7coach/t7coach/lib/screens/training/details/rest_form.dart';
 import 'package:t7coach/screens/training/training_session_widget.dart';
 
-class SpeedRunsForm extends StatefulWidget implements TrainingSessionWidget {
-
+class SpeedRunsForm extends StatefulWidget with TrainingSessionWidget {
   _SpeedRunsFormState state;
+
+  final Function scrollToEnd;
+
+  SpeedRunsForm({this.scrollToEnd});
 
   @override
   _SpeedRunsFormState createState() {
@@ -13,7 +21,7 @@ class SpeedRunsForm extends StatefulWidget implements TrainingSessionWidget {
 
   @override
   List<Widget> getFloatingActionButtonSubMenu() {
-    List<Widget> buttons = [];
+    List<Widget> buttons = super.getFloatingActionButtonSubMenu();
     buttons.add(FloatingActionButton(
       onPressed: () {
         state.addNote();
@@ -43,24 +51,25 @@ class SpeedRunsForm extends StatefulWidget implements TrainingSessionWidget {
 }
 
 class _SpeedRunsFormState extends State<SpeedRunsForm> {
-  List<Widget> detailsWidgets = [Text('SpeedRuns')];
+  List<Widget> detailsWidgets = [];
 
-  Widget addRun() {
+  addDetail(Widget details) {
     setState(() {
-      detailsWidgets.add( Text('RUN') );
+      detailsWidgets.add(details);
     });
+    Timer(Duration(milliseconds: 20), () => widget.scrollToEnd());
   }
 
-  Widget addRest() {
-    setState(() {
-      detailsWidgets.add( Text('REST') );
-    });
+  void addRun() {
+    widget.createAddBottomSheet(context, SpeedRunForm(addDetail));
   }
 
-  Widget addNote() {
-    setState(() {
-      detailsWidgets.add( Text('NOTE') );
-    });
+  void addRest() {
+    widget.createAddBottomSheet(context, RestForm(addDetail));
+  }
+
+  void addNote() {
+    widget.createAddBottomSheet(context, NoteForm(addDetail));
   }
 
   @override

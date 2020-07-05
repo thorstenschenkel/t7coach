@@ -10,12 +10,23 @@ class AnimatedFloatingActionButton extends StatefulWidget {
   final AnimatedIconData animatedIconData;
   final String tooltip;
 
+  _AnimatedFloatingActionButtonState state;
+
   AnimatedFloatingActionButton(
       {Key key, this.fabButtons, this.colorStartAnimation, this.colorEndAnimation, this.animatedIconData, this.tooltip})
       : super(key: key);
 
   @override
-  _AnimatedFloatingActionButtonState createState() => _AnimatedFloatingActionButtonState();
+  _AnimatedFloatingActionButtonState createState() {
+    state = _AnimatedFloatingActionButtonState();
+    print('state: ' + state.toString());
+    return state;
+  }
+
+  closeFloatingActionButton() {
+    // state.close();
+    print('TODO close');
+  }
 }
 
 class _AnimatedFloatingActionButtonState extends State<AnimatedFloatingActionButton>
@@ -73,6 +84,12 @@ class _AnimatedFloatingActionButtonState extends State<AnimatedFloatingActionBut
       _animationController.reverse();
     }
     isOpened = !isOpened;
+  }
+
+  close() {
+    if (isOpened) {
+      animate();
+    }
   }
 
   Widget toggle() {

@@ -4,8 +4,9 @@ import 'package:t7coach/screens/training/details/single_detail.dart';
 
 class RestDetail extends SingleDetail {
   final Rest rest;
+  final Function delete;
 
-  RestDetail(this.rest) : super(rest) {}
+  RestDetail(this.rest, this.delete) : super(rest, delete);
 
   @override
   String getLable() {

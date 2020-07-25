@@ -7,8 +7,9 @@ import 'package:t7coach/shared/input_constants.dart';
 
 class SpeedRunForm extends StatefulWidget {
   final Function addDetail;
+  final Function deleteDetail;
 
-  SpeedRunForm(@required this.addDetail) {}
+  SpeedRunForm(this.addDetail, this.deleteDetail);
 
   @override
   _SpeedRunFormState createState() => _SpeedRunFormState();
@@ -28,7 +29,7 @@ class _SpeedRunFormState extends State<SpeedRunForm> with SingleForm {
     });
     if (_formKey.currentState.validate()) {
       SpeedRun run = SpeedRun(_durationType, _duration);
-      SpeedRunDetail runDetail = SpeedRunDetail(run);
+      SpeedRunDetail runDetail = SpeedRunDetail(run, widget.deleteDetail);
       widget.addDetail(runDetail);
       Navigator.pop(context);
     }

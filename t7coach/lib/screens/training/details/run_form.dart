@@ -7,8 +7,9 @@ import 'package:t7coach/shared/input_constants.dart';
 
 class RunForm extends StatefulWidget {
   final Function addDetail;
+  final Function deleteDetail;
 
-  RunForm(@required this.addDetail) {}
+  RunForm(this.addDetail, this.deleteDetail);
 
   @override
   _RunFormState createState() => _RunFormState();
@@ -29,7 +30,7 @@ class _RunFormState extends State<RunForm> with SingleForm {
     });
     if (_formKey.currentState.validate()) {
       Run run = Run(_runType, _durationType, _duration);
-      RunDetail runDetail = RunDetail(run);
+      RunDetail runDetail = RunDetail(run, widget.deleteDetail);
       widget.addDetail(runDetail);
       Navigator.pop(context);
     }

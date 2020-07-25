@@ -14,3 +14,12 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+TODOS:
+- Nachdem Start/Anmelden: Falls noch keine Trainingsgruppe ausgewählt wurde, immer "Profil bearbeiten anzeigen"
+- Trainingsgruppe bearbeiten muss noch implementiert werden. (Nur für Trainer der Grupper)
+- "Neue Trainingseinheit": Löschen von Detail funktioniert nicht korrekt (deleteDetail)
+- "Neue Trainingseinheit": Animation bei jumpTo abschalten (aber nur hier)
+- AnimatedFloatingActionButton: Schliessen des Menüs
+- "Neue Trainingseinheit": in Bu

@@ -4,8 +4,9 @@ import 'package:t7coach/screens/training/details/single_detail.dart';
 
 class SpeedRunDetail extends SingleDetail {
   final SpeedRun run;
+  final Function delete;
 
-  SpeedRunDetail(this.run) : super(run) {}
+  SpeedRunDetail(this.run, this.delete) : super(run, delete);
 
   @override
   String getLable() {

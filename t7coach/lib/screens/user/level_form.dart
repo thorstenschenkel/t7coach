@@ -7,7 +7,7 @@ class LevelFrom extends StatefulWidget {
   List<String> levels;
   final Function addLevel;
 
-  LevelFrom(@required this.levels, @required this.addLevel) {}
+  LevelFrom(this.levels, this.addLevel);
 
   @override
   _LevelFromState createState() => _LevelFromState();

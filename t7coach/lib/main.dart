@@ -3,7 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:t7coach/screens/authenticate/reset_password.dart';
 import 'package:t7coach/screens/home/home.dart';
-import 'package:t7coach/screens/training/training_add_form.dart';
+import 'package:t7coach/screens/training/training_create_form.dart';
 import 'package:t7coach/screens/user/add_group_form.dart';
 import 'package:t7coach/screens/user/group_form.dart';
 import 'package:t7coach/screens/user/user_data_edit_form.dart';
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
               '/add-group-form': (context) => AddGroupForm(),
               '/group-form': (context) => GroupForm(ModalRoute.of(context).settings.arguments),
               // TRAINING
-              '/add-training': (context) => TrainingAddForm(ModalRoute.of(context).settings.arguments),
+              '/add-training': (context) => TrainingCreateForm(ModalRoute.of(context).settings.arguments),
             },
             localizationsDelegates: [
               // ApplicationLocalizations.delegate,

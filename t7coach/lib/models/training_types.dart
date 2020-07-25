@@ -11,12 +11,13 @@ enum RestType { JOG, WALK, JOG_WALK }
 
 const Map RestTypeMap = {RestType.JOG: 'Trabpause', RestType.WALK: 'Gehpause', RestType.JOG_WALK: 'Trab-/Gehpause'};
 
-enum DurationType { METRES, KILOMETRES, MINUTES }
+enum DurationType { METRES, KILOMETRES, MINUTES, HOUERS }
 
 const Map DurationTypeMap = {
   DurationType.METRES: 'Meter',
   DurationType.KILOMETRES: 'Kilometer',
-  DurationType.MINUTES: 'Minuten'
+  DurationType.MINUTES: 'Minuten',
+  DurationType.HOUERS: 'Stunden'
 };
 
 enum RunType { SPEED_RUN, MEDIUM_TEMPO_RUN, EASY_RUN, LONG_SLOW_DISTANCE }
@@ -31,7 +32,7 @@ const Map RunTypeMap = {
 abstract class Detail {
   String uuid;
 
-  Deatil() {
+  Detail() {
     uuid = Uuid().v1();
   }
 
@@ -57,6 +58,9 @@ String getDurationText(DurationType durationType, String duration) {
     case DurationType.MINUTES:
       text += 'min';
       break;
+    case DurationType.HOUERS:
+      text += 'h';
+      break;
   }
   return text;
 }
@@ -66,7 +70,7 @@ class Run extends Detail {
   final DurationType durationType;
   final String duration;
 
-  Run(this.runType, this.durationType, this.duration) {}
+  Run(this.runType, this.durationType, this.duration);
 
   @override
   String getText() {
@@ -81,7 +85,7 @@ class SpeedRun extends Detail {
   final DurationType durationType;
   final String duration;
 
-  SpeedRun(this.durationType, this.duration) {}
+  SpeedRun(this.durationType, this.duration);
 
   @override
   String getText() {
@@ -95,7 +99,7 @@ class Rest extends Detail {
   final DurationType durationType;
   final String duration;
 
-  Rest(this.restType, this.durationType, this.duration) {}
+  Rest(this.restType, this.durationType, this.duration);
 
   @override
   String getText() {
@@ -109,7 +113,7 @@ class Rest extends Detail {
 class Note extends Detail {
   final String note;
 
-  Note(this.note) {}
+  Note(this.note);
 
   @override
   String getText() {

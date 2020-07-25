@@ -4,7 +4,7 @@ import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
 class ErrorBoxWidget extends StatelessWidget {
   final errorMessage;
 
-  ErrorBoxWidget(this.errorMessage) {}
+  ErrorBoxWidget(this.errorMessage);
 
   @override
   Widget build(BuildContext context) {

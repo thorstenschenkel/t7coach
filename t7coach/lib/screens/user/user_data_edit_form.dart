@@ -17,7 +17,7 @@ import 'package:t7coach/shared/widgets/loading.dart';
 class UserDataEditForm extends StatefulWidget {
   final UserData userData;
 
-  UserDataEditForm(@required this.userData);
+  UserDataEditForm(this.userData);
 
   @override
   _UserDataEditFormState createState() => _UserDataEditFormState();

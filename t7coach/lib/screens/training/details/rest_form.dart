@@ -8,8 +8,9 @@ import 'file:///C:/develop/flutterApps/t7coach/t7coach/lib/screens/training/deta
 
 class RestForm extends StatefulWidget {
   final Function addDetail;
+  final Function deleteDetail;
 
-  RestForm(@required this.addDetail) {}
+  RestForm(this.addDetail, this.deleteDetail);
 
   @override
   _RestFormState createState() => _RestFormState();
@@ -30,10 +31,14 @@ class _RestFormState extends State<RestForm> with SingleForm {
     });
     if (_formKey.currentState.validate()) {
       Rest rest = Rest(_restType, _durationType, _duration);
-      RestDetail restDetail = RestDetail(rest);
+      RestDetail restDetail = RestDetail(rest, widget.deleteDetail);
       widget.addDetail(restDetail);
       Navigator.pop(context);
     }
+  }
+
+  bool _showDistanze(DurationType durationType) {
+    return _durationType == DurationType.METRES || _durationType == DurationType.KILOMETRES;
   }
 
   @override
@@ -46,7 +51,7 @@ class _RestFormState extends State<RestForm> with SingleForm {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(Icons.free_breakfast, size: 12),
+              Icon(Icons.free_breakfast, size: 20),
               SizedBox(width: 5),
               Text('Pause', style: heading2TextStyle, textAlign: TextAlign.left),
             ],
@@ -65,21 +70,43 @@ class _RestFormState extends State<RestForm> with SingleForm {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Expanded(
-                child: TextFormField(
-                    initialValue: _duration,
-                    onSaved: (String val) {
-                      setState(() {
-                        _duration = val;
-                      });
-                    },
-                    onEditingComplete: () {
-                      FocusScope.of(context).nextFocus();
-                    },
-                    keyboardType: TextInputType.number,
-                    textInputAction: TextInputAction.next,
-                    decoration: textInputDecoration.copyWith(labelText: 'Distanz / Dauer'),
-                    validator: (String val) => val.isEmpty ? 'Bitte gib Distanz\nbzw. Dauer der Pause ein.' : null),
+              Visibility(
+                visible: _showDistanze(_durationType),
+                child: Expanded(
+                  child: TextFormField(
+                      initialValue: _duration,
+                      onSaved: (String val) {
+                        setState(() {
+                          _duration = val;
+                        });
+                      },
+                      onEditingComplete: () {
+                        FocusScope.of(context).nextFocus();
+                      },
+                      keyboardType: TextInputType.number,
+                      textInputAction: TextInputAction.next,
+                      decoration: textInputDecoration.copyWith(labelText: 'Distanz'),
+                      validator: (String val) => val.isEmpty ? 'Bitte gib Länge\nder Pause ein.' : null),
+                ),
+              ),
+              Visibility(
+                visible: !_showDistanze(_durationType),
+                child: Expanded(
+                  child: TextFormField(
+                      initialValue: _duration,
+                      onSaved: (String val) {
+                        setState(() {
+                          _duration = val;
+                        });
+                      },
+                      onEditingComplete: () {
+                        FocusScope.of(context).nextFocus();
+                      },
+                      keyboardType: TextInputType.datetime,
+                      textInputAction: TextInputAction.next,
+                      decoration: textInputDecoration.copyWith(labelText: 'Dauer'),
+                      validator: (String val) => val.isEmpty ? 'Bitte gib Länge\nder Pause ein.' : null),
+                ),
               ),
               SizedBox(width: 10),
               Expanded(

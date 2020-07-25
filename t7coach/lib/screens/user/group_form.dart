@@ -17,7 +17,7 @@ import 'package:t7coach/shared/widgets/user_chip.dart';
 class GroupForm extends StatefulWidget {
   final UserData userData;
 
-  GroupForm(@required this.userData) {}
+  GroupForm(this.userData);
 
   @override
   _GroupFormState createState() => _GroupFormState();

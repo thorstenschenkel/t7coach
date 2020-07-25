@@ -7,8 +7,9 @@ import 'package:t7coach/shared/input_constants.dart';
 
 class NoteForm extends StatefulWidget {
   final Function addDetail;
+  final Function deleteDetail;
 
-  NoteForm(@required this.addDetail) {}
+  NoteForm(this.addDetail, this.deleteDetail);
 
   @override
   _NoteFormState createState() => _NoteFormState();
@@ -27,7 +28,7 @@ class _NoteFormState extends State<NoteForm> with SingleForm {
     });
     if (_formKey.currentState.validate()) {
       Note note = Note(_note);
-      NoteDetail noteDetail = NoteDetail(note);
+      NoteDetail noteDetail = NoteDetail(note, widget.deleteDetail);
       widget.addDetail(noteDetail);
       Navigator.pop(context);
     }
@@ -57,7 +58,7 @@ class _NoteFormState extends State<NoteForm> with SingleForm {
               onEditingComplete: () {
                 FocusScope.of(context).nextFocus();
               },
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.text,
               textInputAction: TextInputAction.next,
               decoration: textInputDecoration.copyWith(labelText: 'Bermerkung'),
               validator: (String val) => val.isEmpty ? 'Bitte gib eine Text ein.' : null),

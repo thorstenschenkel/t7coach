@@ -3,9 +3,13 @@ import 'package:t7coach/models/training_types.dart';
 import 'package:t7coach/shared/input_constants.dart';
 
 abstract class SingleDetail extends StatelessWidget {
-  final Detail detail;
+  @override
+  Key get key => ObjectKey(detail.uuid);
 
-  SingleDetail(this.detail) {}
+  final Detail detail;
+  final Function delete;
+
+  SingleDetail(this.detail, this.delete);
 
   String getLable() {
     throw UnimplementedError();
@@ -34,8 +38,14 @@ abstract class SingleDetail extends StatelessWidget {
     return Row(
       children: <Widget>[
         Expanded(
-            child:
-                TextFormField(initialValue: getText(), readOnly: true, decoration: _getTextInputDecoration(getLable())))
+            child: TextFormField(
+                initialValue: getText(), readOnly: true, decoration: _getTextInputDecoration(getLable()))),
+        IconButton(
+          onPressed: () {
+            delete(detail.uuid);
+          },
+          icon: Icon(Icons.delete),
+        )
       ],
     );
   }

@@ -8,7 +8,7 @@ class FillScreenErrorWidget extends StatelessWidget {
   final String title;
   final String message;
 
-  FillScreenErrorWidget({this.title, this.message}) {}
+  FillScreenErrorWidget({this.title, this.message});
 
   _signOut() async {
     await _auth.signOut();
@@ -59,6 +59,5 @@ class FillScreenErrorWidget extends StatelessWidget {
                     child: Text('Abmelden'))
               ],
             )));
-    ;
   }
 }

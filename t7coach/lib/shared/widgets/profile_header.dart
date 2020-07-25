@@ -6,7 +6,7 @@ class ProfilHeader extends StatelessWidget {
   User user;
   UserData userData;
 
-  ProfilHeader(this.user, this.userData) {}
+  ProfilHeader(this.user, this.userData);
 
   Color getCircleColor(UserData userData) {
     return userData.accountColor == null ? Colors.amber : Color(userData.accountColor);

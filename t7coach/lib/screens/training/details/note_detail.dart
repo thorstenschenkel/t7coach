@@ -4,8 +4,9 @@ import 'package:t7coach/screens/training/details/single_detail.dart';
 
 class NoteDetail extends SingleDetail {
   final Note note;
+  final Function delete;
 
-  NoteDetail(this.note) : super(note) {}
+  NoteDetail(this.note, this.delete) : super(note, delete);
 
   @override
   String getLable() {

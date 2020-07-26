@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:t7coach/models/training_types.dart';
 import 'package:t7coach/shared/input_constants.dart';
 
-abstract class SingleDetail extends StatelessWidget {
-  @override
-  Key get key => ObjectKey(detail.uuid);
+abstract class SingleDetail {
+//  @override
+//  Key get key => ObjectKey(detail.uuid);
 
   final Detail detail;
   final Function delete;
@@ -23,30 +23,30 @@ abstract class SingleDetail extends StatelessWidget {
     return detail.getIcon();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    InputDecoration _getTextInputDecoration(String label) {
-      InputDecoration deco = readOnlyTextInputDecoration.copyWith(labelText: label);
-      deco = deco.copyWith(
-          contentPadding: EdgeInsets.fromLTRB(0, 5, 0, 5),
-          fillColor: Theme.of(context).colorScheme.background,
-          prefixIcon: getIcon(),
-          labelStyle: TextStyle(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5)));
-      return deco;
-    }
+  Widget createSubTitle(BuildContext context) {
+    return null;
+  }
 
-    return Row(
-      children: <Widget>[
-        Expanded(
-            child: TextFormField(
-                initialValue: getText(), readOnly: true, decoration: _getTextInputDecoration(getLable()))),
-        IconButton(
-          onPressed: () {
-            delete(detail.uuid);
-          },
-          icon: Icon(Icons.delete),
-        )
-      ],
-    );
+  InputDecoration _getTextInputDecoration(BuildContext context, String label) {
+    InputDecoration deco = readOnlyTextInputDecoration.copyWith(labelText: label);
+    deco = deco.copyWith(
+        contentPadding: EdgeInsets.zero,
+        fillColor: Theme.of(context).colorScheme.background,
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.onBackground.withOpacity(0.5)));
+    return deco;
+  }
+
+  Widget createTitle(BuildContext context) {
+    return TextFormField(
+        initialValue: getText(), readOnly: true, decoration: _getTextInputDecoration(context, getLable()));
+  }
+
+  ListTile createTile(BuildContext context) {
+    return ListTile(
+        key: ValueKey(detail.uuid),
+        dense: true,
+        leading: getIcon(),
+        title: createTitle(context),
+        subtitle: createSubTitle(context));
   }
 }

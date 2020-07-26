@@ -299,7 +299,7 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
                                       controller: _scrollController,
                                       itemCount: detailsWidgets.length,
                                       itemBuilder: (BuildContext ctxt, int index) {
-                                        return Container(child: detailsWidgets[index]);
+                                        return Card(child: detailsWidgets[index].createTile(context));
                                       }))
                             ])))),
               );

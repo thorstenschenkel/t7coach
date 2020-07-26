@@ -19,7 +19,5 @@ samples, guidance on mobile development, and a full API reference.
 TODOS:
 - Nachdem Start/Anmelden: Falls noch keine Trainingsgruppe ausgewählt wurde, immer "Profil bearbeiten anzeigen"
 - Trainingsgruppe bearbeiten muss noch implementiert werden. (Nur für Trainer der Grupper)
-- "Neue Trainingseinheit": Löschen von Detail funktioniert nicht korrekt (deleteDetail)
-- "Neue Trainingseinheit": Animation bei jumpTo abschalten (aber nur hier)
-- AnimatedFloatingActionButton: Schliessen des Menüs
-- "Neue Trainingseinheit": in Bu
+- "Neue Trainingseinheit": Animation bei jumpTo/scrollToBottom abschalten (aber nur hier)
+- "Neue Trainingseinheit": Untersuchen: ReorderableList / ListTile / Editieren eines Details (LongPress) / Löschen durch Wischen

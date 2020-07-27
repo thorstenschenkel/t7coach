@@ -6,28 +6,28 @@ import 'package:t7coach/screens/training/details/speed_run_form.dart';
 import 'package:t7coach/screens/training/services/training_session_service.dart';
 
 class SpeedRunsService extends TrainingSessionService {
-  List<SpeedDialChild> getSpeedDialChildren(BuildContext context, Function createAddBottomSheetCallback,
-      Function addDetailCallback, Function deleteDetailCallback) {
+  List<SpeedDialChild> getSpeedDialChildren(
+      BuildContext context, Function createAddBottomSheetCallback, Function addDetailCallback) {
     return [
       SpeedDialChild(
         child: Icon(Icons.directions_run),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(SpeedRunForm(addDetailCallback, deleteDetailCallback));
+          createAddBottomSheetCallback(SpeedRunForm(addDetailCallback));
         },
       ),
       SpeedDialChild(
         child: Icon(Icons.free_breakfast),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(RestForm(addDetailCallback, deleteDetailCallback));
+          createAddBottomSheetCallback(RestForm(addDetailCallback));
         },
       ),
       SpeedDialChild(
         child: Icon(Icons.speaker_notes),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(NoteForm(addDetailCallback, deleteDetailCallback));
+          createAddBottomSheetCallback(NoteForm(addDetailCallback));
         },
       ),
     ];

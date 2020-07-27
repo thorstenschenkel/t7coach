@@ -7,9 +7,8 @@ abstract class SingleDetail {
 //  Key get key => ObjectKey(detail.uuid);
 
   final Detail detail;
-  final Function delete;
 
-  SingleDetail(this.detail, this.delete);
+  SingleDetail(this.detail);
 
   String getLable() {
     throw UnimplementedError();
@@ -46,6 +45,7 @@ abstract class SingleDetail {
         key: ValueKey(detail.uuid),
         dense: true,
         leading: getIcon(),
+        trailing: Icon(Icons.menu),
         title: createTitle(context),
         subtitle: createSubTitle(context));
   }

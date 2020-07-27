@@ -8,9 +8,8 @@ import 'file:///C:/develop/flutterApps/t7coach/t7coach/lib/screens/training/deta
 
 class RestForm extends StatefulWidget {
   final Function addDetail;
-  final Function deleteDetail;
 
-  RestForm(this.addDetail, this.deleteDetail);
+  RestForm(this.addDetail);
 
   @override
   _RestFormState createState() => _RestFormState();
@@ -31,7 +30,7 @@ class _RestFormState extends State<RestForm> with SingleForm {
     });
     if (_formKey.currentState.validate()) {
       Rest rest = Rest(_restType, _durationType, _duration);
-      RestDetail restDetail = RestDetail(rest, widget.deleteDetail);
+      RestDetail restDetail = RestDetail(rest);
       widget.addDetail(restDetail);
       Navigator.pop(context);
     }

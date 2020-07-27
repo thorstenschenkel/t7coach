@@ -30,7 +30,7 @@ class TrainingCreateForm extends StatefulWidget {
 
 class _TrainingCreateFormState extends State<TrainingCreateForm> {
   final _scrollController = ScrollController();
-  List<SingleDetail> detailsWidgets = [];
+  List<SingleDetail> details = [];
   TrainingSessionService _sessionService;
   bool _dialVisible = false;
 
@@ -60,7 +60,7 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
   List<DropdownMenuItem> _createTraingTypeItems() {
     List<DropdownMenuItem> items = [];
     TrainingTypeMap.forEach((type, name) {
-      DropdownMenuItem item = DropdownMenuItem(value: type, child: Text(name));
+      final DropdownMenuItem item = DropdownMenuItem(value: type, child: Text(name));
       items.add(item);
     });
     return items;
@@ -95,14 +95,14 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
 
     void addDetailCallback(SingleDetail detail) {
       setState(() {
-        detailsWidgets.add(detail);
+        details.add(detail);
         scrollToBottom();
       });
     }
 
     void deleteDetailCallback(String uuid) {
       setState(() {
-        detailsWidgets.removeWhere((single) {
+        details.removeWhere((single) {
           if (single.detail?.uuid == uuid) {
             return true;
           }
@@ -134,10 +134,10 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
         }
       }
       setState(() {
-        detailsWidgets.clear();
+        details.clear();
         if (_sessionService != null) {
-          speedDialChildren = _sessionService.getSpeedDialChildren(
-              context, createAddBottomSheetCallback, addDetailCallback, deleteDetailCallback);
+          speedDialChildren =
+              _sessionService.getSpeedDialChildren(context, createAddBottomSheetCallback, addDetailCallback);
         } else {
           speedDialChildren.clear();
         }
@@ -182,7 +182,7 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
                       lastDate: DateTime(2100));
                   if (pickedDate != null) {
                     setState(() {
-                      _dateString = DateFormat('dd.MM.yyyy').format(pickedDate);
+                      final _dateString = DateFormat('dd.MM.yyyy').format(pickedDate);
                       print(_dateString);
                     });
                   }
@@ -260,6 +260,28 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
           children: speedDialChildren);
     }
 
+    void _onReorder(int oldIndex, int newIndex) {
+      setState(() {
+        if (newIndex > oldIndex) {
+          newIndex -= 1;
+        }
+        final SingleDetail item = details.removeAt(oldIndex);
+        details.insert(newIndex, item);
+      });
+    }
+
+    Widget stackBehindDismiss() {
+      return Container(
+        alignment: Alignment.centerRight,
+        padding: EdgeInsets.only(right: 8),
+        color: Colors.red,
+        child: Icon(
+          Icons.delete,
+          color: Colors.white,
+        ),
+      );
+    }
+
     return StreamBuilder<List<Group>>(
         stream: DatabaseService(uid: user.uid).groups,
         builder: (context, snapshot) {
@@ -295,12 +317,26 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
                             child: Column(children: <Widget>[
                               createTopForm(),
                               new Expanded(
-                                  child: ListView.builder(
-                                      controller: _scrollController,
-                                      itemCount: detailsWidgets.length,
-                                      itemBuilder: (BuildContext ctxt, int index) {
-                                        return Card(child: detailsWidgets[index].createTile(context));
-                                      }))
+                                child: ReorderableListView(
+                                    children: details.map((detail) {
+                                      return Dismissible(
+                                        key: ObjectKey(detail.detail.uuid),
+                                        background: stackBehindDismiss(),
+                                        direction: DismissDirection.endToStart,
+                                        onDismissed: (direction) {
+                                          if (direction == DismissDirection.endToStart) {
+                                            deleteDetailCallback(detail.detail.uuid);
+                                          }
+                                        },
+                                        child: Card(
+                                          child: detail.createTile(context),
+                                          key: ObjectKey(detail.detail.uuid),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onReorder: _onReorder,
+                                    scrollController: _scrollController),
+                              )
                             ])))),
               );
             } else {

@@ -7,9 +7,8 @@ import 'package:t7coach/shared/input_constants.dart';
 
 class NoteForm extends StatefulWidget {
   final Function addDetail;
-  final Function deleteDetail;
 
-  NoteForm(this.addDetail, this.deleteDetail);
+  NoteForm(this.addDetail);
 
   @override
   _NoteFormState createState() => _NoteFormState();
@@ -28,7 +27,7 @@ class _NoteFormState extends State<NoteForm> with SingleForm {
     });
     if (_formKey.currentState.validate()) {
       Note note = Note(_note);
-      NoteDetail noteDetail = NoteDetail(note, widget.deleteDetail);
+      NoteDetail noteDetail = NoteDetail(note);
       widget.addDetail(noteDetail);
       Navigator.pop(context);
     }

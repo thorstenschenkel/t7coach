@@ -34,9 +34,15 @@ dependencies:
   uuid: ^2.0.4
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.7.5
   flutter_test:
     sdk: flutter
 
+flutter_icons:
+  image_path_ios: 'assets/coach.png'
+  image_path_android: 'assets/coach.png'
+  android: true
+  ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

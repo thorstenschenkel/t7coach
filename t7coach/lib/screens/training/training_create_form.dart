@@ -121,12 +121,21 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
     }
 
     void updateDetailCallback(SingleDetail detail) {
-      setState(() {
-        // TODO
-        print('updateDetailCallback is not implemented');
-//        details.add(detail);
-//        scrollToBottom();
-      });
+      SingleDetail oldSingleDetail;
+      try {
+        oldSingleDetail = details.firstWhere((single) {
+          if (single.detail?.uuid == detail.detail.uuid) {
+            return true;
+          }
+          return false;
+        });
+      } on StateError {}
+
+      if (oldSingleDetail != null) {
+        setState(() {
+          oldSingleDetail.detail = detail.detail;
+        });
+      }
     }
 
     void editDetailCallback(SingleDetail singleDetail) {

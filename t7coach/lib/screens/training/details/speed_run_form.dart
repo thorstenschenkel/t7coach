@@ -34,11 +34,18 @@ class _SpeedRunFormState extends State<SpeedRunForm> with SingleFormInner {
       _autoValidate = true;
     });
     if (_formKey.currentState.validate()) {
-      SpeedRun run = SpeedRun(_durationType, _duration);
+      SpeedRun run;
+      if (widget.detail != null) {
+        run = widget.detail;
+        run.durationType = _durationType;
+        run.duration = _duration;
+      } else {
+        run = SpeedRun(_durationType, _duration);
+      }
       SpeedRunDetail runDetail = SpeedRunDetail(run);
       widget.addDetail(runDetail);
       Navigator.pop(context);
-      if (widget.speedRun == null) {
+      if (widget.detail == null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString(PREF_SPEEDRUNFROM_DURATIONTYPE, DurationTypeMap[_durationType]);
       }

@@ -30,7 +30,13 @@ class _NoteFormState extends State<NoteForm> with SingleFormInner {
       _autoValidate = true;
     });
     if (_formKey.currentState.validate()) {
-      Note note = Note(_note);
+      Note note;
+      if (widget.detail != null) {
+        note = widget.detail;
+        note.note = _note;
+      } else {
+        note = Note(_note);
+      }
       NoteDetail noteDetail = NoteDetail(note);
       widget.addDetail(noteDetail);
       Navigator.pop(context);

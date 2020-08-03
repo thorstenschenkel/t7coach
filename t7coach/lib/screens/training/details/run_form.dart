@@ -30,16 +30,29 @@ class _RunFormState extends State<RunForm> with SingleFormInner {
   DurationType _durationType;
   String _duration;
 
-  _save() {
+  _save() async {
     _formKey.currentState.save();
     setState(() {
       _autoValidate = true;
     });
     if (_formKey.currentState.validate()) {
-      Run run = Run(_runType, _durationType, _duration);
+      Run run;
+      if (widget.detail != null) {
+        run = widget.detail;
+        run.runType = _runType;
+        run.durationType = _durationType;
+        run.duration = _duration;
+      } else {
+        run = Run(_runType, _durationType, _duration);
+      }
       RunDetail runDetail = RunDetail(run);
       widget.addDetail(runDetail);
       Navigator.pop(context);
+      if (widget.detail == null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(PREF_RUNFROM_DURATIONTYPE, DurationTypeMap[_durationType]);
+        await prefs.setString(PREF_RUNFROM_RUNTYPE, RunTypeMap[_runType]);
+      }
     }
   }
 

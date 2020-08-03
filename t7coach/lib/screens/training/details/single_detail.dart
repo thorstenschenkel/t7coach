@@ -6,7 +6,7 @@ abstract class SingleDetail {
 //  @override
 //  Key get key => ObjectKey(detail.uuid);
 
-  final Detail detail;
+  Detail detail;
 
   SingleDetail(this.detail);
 
@@ -45,7 +45,6 @@ abstract class SingleDetail {
         key: ValueKey(detail.uuid),
         dense: true,
         leading: getIcon(),
-        trailing: Icon(Icons.menu),
         title: createTitle(context),
         subtitle: createSubTitle(context));
   }

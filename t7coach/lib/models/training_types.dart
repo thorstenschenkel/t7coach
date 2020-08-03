@@ -96,9 +96,9 @@ String getDurationText(DurationType durationType, String duration) {
 }
 
 class Run extends Detail {
-  final RunType runType;
-  final DurationType durationType;
-  final String duration;
+  RunType runType;
+  DurationType durationType;
+  String duration;
 
   Run(this.runType, this.durationType, this.duration);
 
@@ -112,8 +112,8 @@ class Run extends Detail {
 }
 
 class SpeedRun extends Detail {
-  final DurationType durationType;
-  final String duration;
+  DurationType durationType;
+  String duration;
 
   SpeedRun(this.durationType, this.duration);
 
@@ -125,9 +125,9 @@ class SpeedRun extends Detail {
 }
 
 class Rest extends Detail {
-  final RestType restType;
-  final DurationType durationType;
-  final String duration;
+  RestType restType;
+  DurationType durationType;
+  String duration;
 
   Rest(this.restType, this.durationType, this.duration);
 
@@ -141,7 +141,7 @@ class Rest extends Detail {
 }
 
 class Note extends Detail {
-  final String note;
+  String note;
 
   Note(this.note);
 

@@ -31,16 +31,29 @@ class _RestFormState extends State<RestForm> with SingleFormInner {
   DurationType _durationType;
   String _duration;
 
-  _save() {
+  _save() async {
     _formKey.currentState.save();
     setState(() {
       _autoValidate = true;
     });
     if (_formKey.currentState.validate()) {
-      Rest rest = Rest(_restType, _durationType, _duration);
+      Rest rest;
+      if (widget.detail != null) {
+        rest = widget.detail;
+        rest.durationType = _durationType;
+        rest.duration = _duration;
+        rest.restType = _restType;
+      } else {
+        rest = Rest(_restType, _durationType, _duration);
+      }
       RestDetail restDetail = RestDetail(rest);
       widget.addDetail(restDetail);
       Navigator.pop(context);
+      if (widget.detail == null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString(PREF_RESTFROM_DURATIONTYPE, DurationTypeMap[_durationType]);
+        await prefs.setString(PREF_RESTFROM_RESTTYPE, RestTypeMap[_restType]);
+      }
     }
   }
 

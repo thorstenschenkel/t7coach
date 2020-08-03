@@ -11,6 +11,16 @@ enum RestType { JOG, WALK, JOG_WALK }
 
 const Map RestTypeMap = {RestType.JOG: 'Trabpause', RestType.WALK: 'Gehpause', RestType.JOG_WALK: 'Trab-/Gehpause'};
 
+RestType getRestTypeByString(String strg) {
+  RestType retKey = null;
+  RestTypeMap.forEach((key, value) {
+    if (strg == value) {
+      retKey = key;
+    }
+  });
+  return retKey;
+}
+
 enum DurationType { METRES, KILOMETRES, MINUTES, HOUERS }
 
 const Map DurationTypeMap = {
@@ -20,6 +30,16 @@ const Map DurationTypeMap = {
   DurationType.HOUERS: 'Stunden'
 };
 
+DurationType getDurationTypeByString(String strg) {
+  DurationType retKey = null;
+  DurationTypeMap.forEach((key, value) {
+    if (strg == value) {
+      retKey = key;
+    }
+  });
+  return retKey;
+}
+
 enum RunType { SPEED_RUN, MEDIUM_TEMPO_RUN, EASY_RUN, LONG_SLOW_DISTANCE }
 
 const Map RunTypeMap = {
@@ -28,6 +48,16 @@ const Map RunTypeMap = {
   RunType.EASY_RUN: 'Ruhiger Dauerlauf',
   RunType.LONG_SLOW_DISTANCE: 'Langsamer Dauerlauf'
 };
+
+RunType getRunTypeByString(String strg) {
+  RunType retKey = null;
+  RunTypeMap.forEach((key, value) {
+    if (strg == value) {
+      retKey = key;
+    }
+  });
+  return retKey;
+}
 
 abstract class Detail {
   String uuid;

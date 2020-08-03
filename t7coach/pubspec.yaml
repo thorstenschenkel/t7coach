@@ -29,6 +29,7 @@ dependencies:
   flutter_speed_dial: ^1.2.5
   flutter_spinkit: ^4.1.2+1
   loading_overlay: ^0.2.1
+  shared_preferences: ^0.5.8
   package_info: ^0.4.0+18
   provider: ^4.0.5
   uuid: ^2.0.4

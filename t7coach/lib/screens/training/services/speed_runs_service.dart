@@ -13,21 +13,21 @@ class SpeedRunsService extends TrainingSessionService {
         child: Icon(Icons.directions_run),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(SpeedRunForm(addDetailCallback));
+          createAddBottomSheetCallback(SpeedRunForm(addDetailCallback, null));
         },
       ),
       SpeedDialChild(
         child: Icon(Icons.free_breakfast),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(RestForm(addDetailCallback));
+          createAddBottomSheetCallback(RestForm(addDetailCallback, null));
         },
       ),
       SpeedDialChild(
         child: Icon(Icons.speaker_notes),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(NoteForm(addDetailCallback));
+          createAddBottomSheetCallback(NoteForm(addDetailCallback, null));
         },
       ),
     ];

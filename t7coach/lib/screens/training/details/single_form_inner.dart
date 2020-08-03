@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:t7coach/models/training_types.dart';
 
-class SingleForm {
-  Widget createCancleAndOk(BuildContext context, Function save) {
+class SingleFormInner {
+  Widget createCancelAndOk(BuildContext context, Function save) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[

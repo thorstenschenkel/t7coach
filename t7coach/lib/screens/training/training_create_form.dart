@@ -8,6 +8,10 @@ import 'package:t7coach/models/training_types.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
 import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
+import 'package:t7coach/screens/training/details/rest_form.dart';
+import 'package:t7coach/screens/training/details/run_form.dart';
+import 'package:t7coach/screens/training/details/speed_run_detail.dart';
+import 'package:t7coach/screens/training/details/speed_run_form.dart';
 import 'package:t7coach/screens/training/services/endurance_run_service.dart';
 import 'package:t7coach/screens/training/services/speed_runs_service.dart';
 import 'package:t7coach/screens/training/services/training_session_service.dart';
@@ -17,6 +21,10 @@ import 'package:t7coach/shared/widgets/error_box_widget.dart';
 import 'package:t7coach/shared/widgets/full_screen_error_widget.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
 
+import 'details/note_detail.dart';
+import 'details/note_form.dart';
+import 'details/rest_detail.dart';
+import 'details/run_detail.dart';
 import 'details/single_detail.dart';
 
 class TrainingCreateForm extends StatefulWidget {
@@ -79,12 +87,12 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
   Widget build(BuildContext context) {
     void createAddBottomSheetCallback(Widget form) {
       showModalBottomSheet(
-          isScrollControlled: false,
+          isScrollControlled: true,
           enableDrag: true,
           isDismissible: true,
           context: context,
           builder: (context) {
-            return Container(padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20), child: form);
+            return Container(padding: EdgeInsets.fromLTRB(8, 40, 16, 8), child: form);
           });
     }
 
@@ -110,6 +118,32 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
         });
         scrollToBottom();
       });
+    }
+
+    void updateDetailCallback(SingleDetail detail) {
+      setState(() {
+        // TODO
+        print('updateDetailCallback is not implemented');
+//        details.add(detail);
+//        scrollToBottom();
+      });
+    }
+
+    void editDetailCallback(SingleDetail singleDetail) {
+      Widget formWidget;
+      if (singleDetail is NoteDetail) {
+        formWidget = NoteForm(updateDetailCallback, singleDetail.note);
+      } else if (singleDetail is RestDetail) {
+        formWidget = RestForm(updateDetailCallback, singleDetail.rest);
+      } else if (singleDetail is RunDetail) {
+        formWidget = RunForm(updateDetailCallback, singleDetail.run);
+      } else if (singleDetail is SpeedRunDetail) {
+        formWidget = SpeedRunForm(updateDetailCallback, singleDetail.run);
+      }
+
+      if (formWidget != null) {
+        createAddBottomSheetCallback(formWidget);
+      }
     }
 
     final user = Provider.of<User>(context);
@@ -184,6 +218,7 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
                     setState(() {
                       final _dateString = DateFormat('dd.MM.yyyy').format(pickedDate);
                       print(_dateString);
+                      _dateController.value = TextEditingValue(text: _dateString);
                     });
                   }
                 },
@@ -270,13 +305,25 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
       });
     }
 
-    Widget stackBehindDismiss() {
+    Widget secondaryStackBehindDismiss() {
       return Container(
         alignment: Alignment.centerRight,
         padding: EdgeInsets.only(right: 8),
         color: Colors.red,
         child: Icon(
           Icons.delete,
+          color: Colors.white,
+        ),
+      );
+    }
+
+    Widget stackBehindDismiss() {
+      return Container(
+        alignment: Alignment.centerLeft,
+        padding: EdgeInsets.only(left: 8),
+        color: Theme.of(context).colorScheme.primary,
+        child: Icon(
+          Icons.edit,
           color: Colors.white,
         ),
       );
@@ -322,7 +369,16 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
                                       return Dismissible(
                                         key: ObjectKey(detail.detail.uuid),
                                         background: stackBehindDismiss(),
-                                        direction: DismissDirection.endToStart,
+                                        secondaryBackground: secondaryStackBehindDismiss(),
+                                        direction: DismissDirection.horizontal,
+                                        confirmDismiss: (direction) async {
+                                          if (direction == DismissDirection.endToStart) {
+                                            return true;
+                                          } else if (direction == DismissDirection.startToEnd) {
+                                            editDetailCallback(detail);
+                                          }
+                                          return false;
+                                        },
                                         onDismissed: (direction) {
                                           if (direction == DismissDirection.endToStart) {
                                             deleteDetailCallback(detail.detail.uuid);

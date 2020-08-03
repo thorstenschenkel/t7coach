@@ -12,14 +12,14 @@ class EnduranceRunService extends TrainingSessionService {
         child: Icon(Icons.directions_run),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(RunForm(addDetailCallback));
+          createAddBottomSheetCallback(RunForm(addDetailCallback, null));
         },
       ),
       SpeedDialChild(
         child: Icon(Icons.speaker_notes),
         backgroundColor: Theme.of(context).primaryColor,
         onTap: () {
-          createAddBottomSheetCallback(NoteForm(addDetailCallback));
+          createAddBottomSheetCallback(NoteForm(addDetailCallback, null));
         },
       ),
     ];

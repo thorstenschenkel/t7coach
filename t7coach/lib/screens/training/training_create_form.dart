@@ -8,9 +8,10 @@ import 'package:t7coach/models/training_types.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
 import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
+import 'package:t7coach/screens/training/details/note_form.dart';
 import 'package:t7coach/screens/training/details/rest_form.dart';
 import 'package:t7coach/screens/training/details/run_form.dart';
-import 'package:t7coach/screens/training/details/speed_run_detail.dart';
+import 'package:t7coach/screens/training/details/single_detail.dart';
 import 'package:t7coach/screens/training/details/speed_run_form.dart';
 import 'package:t7coach/screens/training/services/endurance_run_service.dart';
 import 'package:t7coach/screens/training/services/speed_runs_service.dart';
@@ -20,12 +21,6 @@ import 'package:t7coach/shared/input_constants.dart';
 import 'package:t7coach/shared/widgets/error_box_widget.dart';
 import 'package:t7coach/shared/widgets/full_screen_error_widget.dart';
 import 'package:t7coach/shared/widgets/loading.dart';
-
-import 'details/note_detail.dart';
-import 'details/note_form.dart';
-import 'details/rest_detail.dart';
-import 'details/run_detail.dart';
-import 'details/single_detail.dart';
 
 class TrainingCreateForm extends StatefulWidget {
   final UserData userData;
@@ -140,14 +135,15 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
 
     void editDetailCallback(SingleDetail singleDetail) {
       Widget formWidget;
-      if (singleDetail is NoteDetail) {
-        formWidget = NoteForm(updateDetailCallback, singleDetail.note);
-      } else if (singleDetail is RestDetail) {
-        formWidget = RestForm(updateDetailCallback, singleDetail.rest);
-      } else if (singleDetail is RunDetail) {
-        formWidget = RunForm(updateDetailCallback, singleDetail.run);
-      } else if (singleDetail is SpeedRunDetail) {
-        formWidget = SpeedRunForm(updateDetailCallback, singleDetail.run);
+      Detail detail = singleDetail?.detail;
+      if (detail is Note) {
+        formWidget = NoteForm(updateDetailCallback, detail);
+      } else if (detail is Rest) {
+        formWidget = RestForm(updateDetailCallback, detail);
+      } else if (detail is Run) {
+        formWidget = RunForm(updateDetailCallback, detail);
+      } else if (detail is SpeedRun) {
+        formWidget = SpeedRunForm(updateDetailCallback, detail);
       }
 
       if (formWidget != null) {
@@ -277,19 +273,8 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
       // https://proandroiddev.com/flutter-how-to-using-bottomappbar-75d53426f5af
 
       return BottomAppBar(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {},
-            ),
-            IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () {},
-            ),
-          ],
+        child: SizedBox(
+          height: 45,
         ),
       );
     }

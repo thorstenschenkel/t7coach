@@ -20,4 +20,3 @@ TODOS:
 - Nachdem Start/Anmelden: Falls noch keine Trainingsgruppe ausgewählt wurde, immer "Profil bearbeiten anzeigen"
 - Trainingsgruppe bearbeiten muss noch implementiert werden. (Nur für Trainer der Grupper)
 - "Neue Trainingseinheit": Animation bei jumpTo/scrollToBottom abschalten (aber nur hier)
-- "Neue Trainingseinheit": Editieren eines Details (LongPress)

@@ -56,6 +56,10 @@ class _RunFormState extends State<RunForm> with SingleFormInner {
     }
   }
 
+  bool _showDistanze(DurationType durationType) {
+    return _durationType == DurationType.METRES || _durationType == DurationType.KILOMETRES;
+  }
+
   Future<bool> asyncInit() async {
     if (_duration == null && widget.run != null) {
       _duration = widget.run.duration;
@@ -116,22 +120,45 @@ class _RunFormState extends State<RunForm> with SingleFormInner {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Expanded(
-                        child: TextFormField(
-                            autofocus: true,
-                            initialValue: _duration,
-                            onSaved: (String val) {
-                              setState(() {
-                                _duration = val;
-                              });
-                            },
-                            onEditingComplete: () {
-                              FocusScope.of(context).nextFocus();
-                            },
-                            keyboardType: TextInputType.number,
-                            textInputAction: TextInputAction.next,
-                            decoration: textInputDecoration.copyWith(labelText: 'Distanz / Dauer'),
-                            validator: (String val) => val.isEmpty ? 'Bitte gib Distanz\nbzw. Dauer Laufs ein.' : null),
+                      Visibility(
+                        visible: _showDistanze(_durationType),
+                        child: Expanded(
+                          child: TextFormField(
+                              autofocus: true,
+                              initialValue: _duration,
+                              onSaved: (String val) {
+                                setState(() {
+                                  _duration = val;
+                                });
+                              },
+                              onEditingComplete: () {
+                                FocusScope.of(context).nextFocus();
+                              },
+                              keyboardType: TextInputType.number,
+                              textInputAction: TextInputAction.next,
+                              decoration: textInputDecoration.copyWith(labelText: 'Distanz'),
+                              validator: (String val) => val.isEmpty ? 'Bitte gib Länge\n des Laufs ein.' : null),
+                        ),
+                      ),
+                      Visibility(
+                        visible: !_showDistanze(_durationType),
+                        child: Expanded(
+                          child: TextFormField(
+                              autofocus: true,
+                              initialValue: _duration,
+                              onSaved: (String val) {
+                                setState(() {
+                                  _duration = val;
+                                });
+                              },
+                              onEditingComplete: () {
+                                FocusScope.of(context).nextFocus();
+                              },
+                              keyboardType: TextInputType.datetime,
+                              textInputAction: TextInputAction.next,
+                              decoration: textInputDecoration.copyWith(labelText: 'Dauer'),
+                              validator: (String val) => val.isEmpty ? 'Bitte gib Länge\n des Laufs ein.' : null),
+                        ),
                       ),
                       SizedBox(width: 10),
                       Expanded(

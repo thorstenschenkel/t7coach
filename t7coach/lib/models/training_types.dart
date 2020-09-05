@@ -7,6 +7,16 @@ enum TrainingType { SPEED_RUNS, ENDURANCE_RUN }
 
 const Map TrainingTypeMap = {TrainingType.SPEED_RUNS: 'Tempoläufe', TrainingType.ENDURANCE_RUN: 'Dauerlauf'};
 
+TrainingType getTrainingTypeByString(String strg) {
+  TrainingType retKey = null;
+  TrainingTypeMap.forEach((key, value) {
+    if (strg == value) {
+      retKey = key;
+    }
+  });
+  return retKey;
+}
+
 enum RestType { JOG, WALK, JOG_WALK }
 
 const Map RestTypeMap = {RestType.JOG: 'Trabpause', RestType.WALK: 'Gehpause', RestType.JOG_WALK: 'Trab-/Gehpause'};
@@ -109,6 +119,14 @@ class Run extends Detail {
     text += getDurationText(durationType, duration);
     return text;
   }
+
+  Run.fromJson(Map<String, dynamic> json)
+      : runType = getRunTypeByString(json['runType']),
+        durationType = getDurationTypeByString(json['durationType']),
+        duration = json['duration'];
+
+  Map<String, dynamic> toJson() =>
+      {'runType': RunTypeMap[runType], 'durationType': DurationTypeMap[durationType], 'duration': duration};
 }
 
 class SpeedRun extends Detail {
@@ -122,6 +140,12 @@ class SpeedRun extends Detail {
     String text = getDurationText(durationType, duration);
     return text;
   }
+
+  SpeedRun.fromJson(Map<String, dynamic> json)
+      : durationType = getDurationTypeByString(json['durationType']),
+        duration = json['duration'];
+
+  Map<String, dynamic> toJson() => {'durationType': DurationTypeMap[durationType], 'duration': duration};
 }
 
 class Rest extends Detail {
@@ -138,6 +162,14 @@ class Rest extends Detail {
     text += getDurationText(durationType, duration);
     return text;
   }
+
+  Rest.fromJson(Map<String, dynamic> json)
+      : restType = getRestTypeByString(json['name']),
+        durationType = getDurationTypeByString(json['durationType']),
+        duration = json['duration'];
+
+  Map<String, dynamic> toJson() =>
+      {'restType': RestTypeMap[restType], 'durationType': DurationTypeMap[durationType], 'duration': duration};
 }
 
 class Note extends Detail {
@@ -149,23 +181,8 @@ class Note extends Detail {
   String getText() {
     return note.trim();
   }
-}
 
-abstract class TrainingSession {
-  DateTime date;
-  TrainingType type;
-  String note;
-  String level;
+  Note.fromJson(Map<String, dynamic> json) : note = json['note'];
 
-  TrainingSession(DateTime date, TrainingType type) {
-    this.date = date;
-    this.type = type;
-  }
-}
-
-class SpeedRuns extends TrainingSession {
-  List<Run> runs = [];
-  List<Rest> rests = [];
-
-  SpeedRuns(DateTime date, TrainingType type) : super(date, type);
+  Map<String, dynamic> toJson() => {'note': note};
 }

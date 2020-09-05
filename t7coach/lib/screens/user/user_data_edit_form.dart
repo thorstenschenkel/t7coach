@@ -305,8 +305,8 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                     appBar: AppBar(title: Text('Profil berabeiten'), elevation: 0, actions: [
                       IconButton(
                         icon: Icon(Icons.check),
-                        onPressed: () {
-                          _save(widget.userData);
+                        onPressed: () async {
+                          await _save(widget.userData);
                         },
                       ),
                     ]),

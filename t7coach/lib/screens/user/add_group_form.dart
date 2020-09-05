@@ -166,8 +166,8 @@ class _AddGroupFormState extends State<AddGroupForm> {
           appBar: AppBar(title: Text('Neue Traingsgruppe'), elevation: 0, actions: [
             IconButton(
               icon: Icon(Icons.check),
-              onPressed: () {
-                _save();
+              onPressed: () async {
+                await _save();
               },
             ),
           ]),

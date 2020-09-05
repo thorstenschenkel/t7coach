@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:t7coach/models/db_error.dart';
 import 'package:t7coach/models/group.dart';
+import 'package:t7coach/models/training_session.dart';
 import 'package:t7coach/models/user_data.dart';
+import 'package:uuid/uuid.dart';
 
 class DatabaseService {
   final String uid;
@@ -12,6 +16,7 @@ class DatabaseService {
 
   final CollectionReference usersCollection = Firestore.instance.collection('users');
   final CollectionReference groupsCollection = Firestore.instance.collection('groups');
+  final CollectionReference trainingSessionsCollection = Firestore.instance.collection('training-sessions');
 
   // user data
   Future updateUserData(UserData userData) async {
@@ -147,6 +152,36 @@ class DatabaseService {
     } catch (e) {
       print(e.toString());
       return _exceptionToError(e, 'Fehler beim Lesen der Trainingsgruppen');
+    }
+  }
+
+  String _getTraingsSessionDetails(TrainingSession session) {
+    // List<String> jsonDetails = [];
+    // session.details.forEach((d) {
+    //   String jsonDetail = json.encode(d);
+    //   jsonDetails.add(jsonDetail);
+    // });
+    // return json.encode(jsonDetails);
+    return json.encode(session.details);
+  }
+
+  // training
+  Future updateTrainingSession(TrainingSession session) async {
+    try {
+      session.uuid = session.uuid ?? Uuid().v1();
+      session.uid = session.uid ?? uid;
+      final Map<String, dynamic> data = {
+        'uuid': session.uuid,
+        'uid': session.uid,
+        'dateString': session.convertDate2String(),
+        'level': session.level,
+        'trainingType': session.convertTrainingType2String(),
+        'details': _getTraingsSessionDetails(session)
+      };
+      return await trainingSessionsCollection.document(session.uuid).setData(data);
+    } catch (e) {
+      print(e.toString());
+      return _exceptionToError(e, 'Fehler beim Speichern der Trainingseinheit');
     }
   }
 

@@ -3,7 +3,9 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_overlay/loading_overlay.dart';
 import 'package:provider/provider.dart';
+import 'package:t7coach/models/db_error.dart';
 import 'package:t7coach/models/group.dart';
+import 'package:t7coach/models/training_session.dart';
 import 'package:t7coach/models/training_types.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
@@ -56,8 +58,15 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
     return Visibility(visible: _visibilityError, child: ErrorBoxWidget(error));
   }
 
-  _save() {
-    // TODO
+  void _setError(String text) {
+    setState(() {
+      error = text;
+      _visibilityError = true;
+    });
+    // _scrollToTop();
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   List<DropdownMenuItem> _createTraingTypeItems() {
@@ -80,6 +89,39 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
+
+    _save() async {
+      FocusScope.of(context).unfocus();
+      setState(() {
+        _autoValidate = true;
+        error = '';
+        _visibilityError = false;
+      });
+      if (_formKey.currentState.validate()) {
+        setState(() {
+          _isLoading = true;
+        });
+        TrainingSession newSession = TrainingSession();
+        newSession.date = DateFormat('dd.MM.yyyy').parse(_dateString);
+        newSession.level = _level;
+        newSession.type = _trainingType;
+        newSession.details = details.map((singleDetail) => singleDetail.detail).toList();
+        // TODO
+        dynamic updateResult = await DatabaseService(uid: user.uid).updateTrainingSession(newSession);
+        if (updateResult is DbError) {
+          _setError(updateResult.errorText);
+          return;
+        }
+        setState(() {
+          _isLoading = false;
+        });
+        // TODO Navigator.of(context).pop(newGroup.name);
+      } else {
+        // _scrollToTop();
+      }
+    }
+
     void createAddBottomSheetCallback(Widget form) {
       showModalBottomSheet(
           isScrollControlled: true,
@@ -87,7 +129,9 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
           isDismissible: true,
           context: context,
           builder: (context) {
-            return Container(padding: EdgeInsets.fromLTRB(8, 40, 16, 8), child: form);
+            return SingleChildScrollView(
+                child: Container(
+                    padding: EdgeInsets.fromLTRB(8, 40, 16, MediaQuery.of(context).viewInsets.bottom), child: form));
           });
     }
 
@@ -150,8 +194,6 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
         createAddBottomSheetCallback(formWidget);
       }
     }
-
-    final user = Provider.of<User>(context);
 
     Future<bool> _onWillPop(UserData userData) async {
       return true;
@@ -221,7 +263,7 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
                       lastDate: DateTime(2100));
                   if (pickedDate != null) {
                     setState(() {
-                      final _dateString = DateFormat('dd.MM.yyyy').format(pickedDate);
+                      _dateString = DateFormat('dd.MM.yyyy').format(pickedDate);
                       print(_dateString);
                       _dateController.value = TextEditingValue(text: _dateString);
                     });
@@ -341,8 +383,8 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
                     appBar: AppBar(title: Text('Neue Trainingseinheit'), elevation: 0, actions: [
                       IconButton(
                         icon: Icon(Icons.check),
-                        onPressed: () {
-                          _save();
+                        onPressed: () async {
+                          await _save();
                         },
                       ),
                     ]),

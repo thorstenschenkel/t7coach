@@ -103,6 +103,7 @@ class _TrainingCreateFormState extends State<TrainingCreateForm> {
           _isLoading = true;
         });
         TrainingSession newSession = TrainingSession();
+        newSession.groupName = group.name;
         newSession.date = DateFormat('dd.MM.yyyy').parse(_dateString);
         newSession.level = _level;
         newSession.type = _trainingType;

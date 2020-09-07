@@ -4,6 +4,7 @@ class TrainingSession {
   String uuid;
 
   String uid; // ID of the user who created this session
+  String groupName;
 
   DateTime date;
   String level;

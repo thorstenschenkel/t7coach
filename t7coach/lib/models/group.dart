@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class Group {
-  String name;
+  String name; // unique name
   String pin;
   String uid;
   List<String> levels;

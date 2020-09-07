@@ -173,6 +173,7 @@ class DatabaseService {
       final Map<String, dynamic> data = {
         'uuid': session.uuid,
         'uid': session.uid,
+        'groupName': session.groupName,
         'dateString': session.convertDate2String(),
         'level': session.level,
         'trainingType': session.convertTrainingType2String(),

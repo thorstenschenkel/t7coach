@@ -1,0 +1,3 @@
+Firebase
+SHA-1:  "t7coachsha-1" - 9077c8026143762129de7f42418522ab13e4acb7
+SHA-256: "t7coachsha-1" - 3bc709d770436c4a4aed8c60a538a12274097305e296e7e66cc4aa79cfc6ead8

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:t7coach/models/auth_error.dart';
+import 'package:t7coach/screens/authenticate/alternative_sign_in.dart';
 import 'package:t7coach/services/auth_service.dart';
 import 'package:t7coach/shared/icon_constants.dart';
 import 'package:t7coach/shared/ink_well_constants.dart';
@@ -94,7 +95,9 @@ class _SignInFormState extends State<SignInForm> {
                           },
                         ),
                       ],
-                    )
+                    ),
+                    SizedBox(height: 10),
+                    AlternativeSignIn(updateErrorAfterSignIn: _updateErrorAfterSignIn)
                   ],
                 ),
               ),
@@ -131,21 +134,27 @@ class _SignInFormState extends State<SignInForm> {
       _formKey.currentState.save();
       dynamic result = await _auth.signInWithEmailAndPassword(email, password);
       if (result is AuthError) {
-        setState(() {
-          _autoValidate = true;
-          error = result.errorText;
-          _visibilityError = true;
-          widget.scrollToTop();
-          widget.loading(false);
-        });
+        _updateErrorAfterSignIn(result);
       }
     } else {
-      setState(() {
+      _updateErrorAfterSignIn(null);
+    }
+  }
+
+  _updateErrorAfterSignIn(AuthError authError) {
+    setState(() {
+      if (authError != null) {
+        _autoValidate = true;
+        error = authError.errorText;
+        _visibilityError = true;
+        widget.scrollToTop();
+        widget.loading(false);
+      } else {
         error = '';
         _visibilityError = false;
         _autoValidate = true;
-      });
-    }
+      }
+    });
   }
 
   Widget buildErrorBox() {

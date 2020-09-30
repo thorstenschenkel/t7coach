@@ -11,6 +11,6 @@ const topContainerPadding =  EdgeInsets.symmetric(vertical: 8, horizontal: 8);
 const subContainerPadding = EdgeInsets.symmetric(vertical: 20, horizontal: 20);
 
 const divider = Divider(
-  height: 25,
+  height: 15,
   thickness: 2,
 );

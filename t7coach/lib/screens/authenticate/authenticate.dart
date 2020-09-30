@@ -56,7 +56,7 @@ class _AuthenticateState extends State<Authenticate> {
         SingleChildScrollView(
             controller: _scrollController,
             child: Padding(
-                padding: EdgeInsets.only(top: 125),
+                padding: EdgeInsets.only(top: 100),
                 child: Card(elevation: 4.0, margin: const EdgeInsets.all(8.0), child: form)))
       ]),
     ));

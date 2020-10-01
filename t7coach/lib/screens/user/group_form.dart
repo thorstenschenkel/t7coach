@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:t7coach/models/db_error.dart';
 import 'package:t7coach/models/group.dart';
@@ -24,6 +25,8 @@ class GroupForm extends StatefulWidget {
 }
 
 class _GroupFormState extends State<GroupForm> {
+  final logger = Logger();
+
   bool _isLoading = true;
   bool _isLoadingAthletes = true;
   bool _isLoadingCoachName = true;
@@ -178,22 +181,25 @@ class _GroupFormState extends State<GroupForm> {
           if (!snapshot.hasError) {
             if (snapshot.hasData) {
               groups = snapshot.data;
-              group = groups.firstWhere((g) => g.name == widget.userData.groupName);
+              var groupIndex = groups.indexWhere((g) => g.name == widget.userData.groupName);
+              if (groupIndex == -1) {
+                logger.w({'user': user.email, 'widget.userData': widget.userData});
+                return FillScreenErrorWidget(
+                    title: null,
+                    message: 'Keine Gruppe für diesen Anwender gefunden',
+                    showButton: false,
+                    showInternet: false);
+              }
+              group = groups[groupIndex];
               _updateCoachName(user, group);
               _updateAthletes(user, group);
               return LoadingOverlay(
                 isLoading: _isLoading,
                 opacity: 0.75,
                 progressIndicator: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation(Theme
-                      .of(context)
-                      .colorScheme
-                      .primary),
+                  valueColor: AlwaysStoppedAnimation(Theme.of(context).colorScheme.primary),
                 ),
-                color: Theme
-                    .of(context)
-                    .colorScheme
-                    .primary,
+                color: Theme.of(context).colorScheme.primary,
                 child: Scaffold(
                     appBar: AppBar(title: Text('Traingsgruppe'), elevation: 0, actions: [
                       Visibility(
@@ -206,34 +212,34 @@ class _GroupFormState extends State<GroupForm> {
                     ]),
                     body: SingleChildScrollView(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-                          Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  _buildErrorBox(),
-                                  TextFormField(
-                                      initialValue: widget.userData.groupName,
-                                      decoration: _getTextInputDecoration(context, 'Gruppenname'),
-                                      readOnly: true),
-                                  SizedBox(height: 5),
-                                  TextFormField(
-                                      controller: _coachNameController,
-                                      // initialValue: coachName,
-                                      decoration: _getTextInputDecoration(context, 'Trainer'),
-                                      readOnly: true),
-                                  SizedBox(height: 5),
-                                  Text('Athleten', style: heading2TextStyle, textAlign: TextAlign.left),
-                                  Wrap(
-                                    spacing: 5,
-                                    runSpacing: 5,
-                                    children: _getAthletesChips(),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Visibility(
-                                      visible: group?.levels != null && group.levels.length > 0,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              _buildErrorBox(),
+                              TextFormField(
+                                  initialValue: widget.userData.groupName,
+                                  decoration: _getTextInputDecoration(context, 'Gruppenname'),
+                                  readOnly: true),
+                              SizedBox(height: 5),
+                              TextFormField(
+                                  controller: _coachNameController,
+                                  // initialValue: coachName,
+                                  decoration: _getTextInputDecoration(context, 'Trainer'),
+                                  readOnly: true),
+                              SizedBox(height: 5),
+                              Text('Athleten', style: heading2TextStyle, textAlign: TextAlign.left),
+                              Wrap(
+                                spacing: 5,
+                                runSpacing: 5,
+                                children: _getAthletesChips(),
+                              ),
+                              SizedBox(height: 5),
+                              Visibility(
+                                  visible: group?.levels != null && group.levels.length > 0,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
                                       Text('Leistungslevels', style: heading2TextStyle, textAlign: TextAlign.left),
                                       Wrap(
@@ -243,9 +249,9 @@ class _GroupFormState extends State<GroupForm> {
                                       )
                                     ],
                                   ))
-                                ],
-                              ))
-                        ]))),
+                            ],
+                          ))
+                    ]))),
               );
             } else {
               return Loading();

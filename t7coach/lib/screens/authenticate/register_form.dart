@@ -97,7 +97,12 @@ class _RegisterFormState extends State<RegisterForm> {
                         decoration: textInputDecoration.copyWith(
                             labelText: 'Passwort wiederholen', prefixIcon: Icon(Icons.lock)),
                         validator: (String val) {
-                          return val.isEmpty ? 'Bitte wiederhole das Passwort.' : null;
+                          if ( val.isEmpty) {
+                            return 'Bitte wiederhole das Passwort.';
+                          } else if ( val != password ) {
+                            return 'Passwörter stimmen nicht überein.';
+                          }
+                          return null;
                         }),
                     SizedBox(height: 5),
                     RaisedButton(

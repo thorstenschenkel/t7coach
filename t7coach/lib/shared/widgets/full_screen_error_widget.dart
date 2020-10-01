@@ -7,8 +7,10 @@ class FillScreenErrorWidget extends StatelessWidget {
 
   final String title;
   final String message;
+  final bool showInternet;
+  final bool showButton;
 
-  FillScreenErrorWidget({this.title, this.message});
+  FillScreenErrorWidget({this.title, this.message, this.showInternet = true, this.showButton = true});
 
   _signOut() async {
     await _auth.signOut();
@@ -37,26 +39,37 @@ class FillScreenErrorWidget extends StatelessWidget {
                           message,
                           style: errorTextStyle.copyWith(color: Theme.of(context).errorColor),
                         ),
-                        SizedBox(height: 20),
-                        Text(
-                          ' \u2022 Prüfe deine Internetverbindung.',
-                          style: errorTextStyle.copyWith(color: Theme.of(context).errorColor),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          ' \u2022 Bitte melde dich ab und versuche es erneut.',
-                          style: errorTextStyle.copyWith(color: Theme.of(context).errorColor),
+                        Visibility(
+                          visible: showInternet,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              SizedBox(height: 20),
+                              Text(
+                                ' \u2022 Prüfe deine Internetverbindung.',
+                                style: errorTextStyle.copyWith(color: Theme.of(context).errorColor),
+                              ),
+                              SizedBox(height: 20),
+                              Text(
+                                ' \u2022 Bitte melde dich ab und versuche es erneut.',
+                                style: errorTextStyle.copyWith(color: Theme.of(context).errorColor),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
                 SizedBox(height: 20),
-                RaisedButton(
-                    onPressed: () async {
-                      await _signOut();
-                    },
-                    child: Text('Abmelden'))
+                Visibility(
+                  visible: showButton,
+                  child: RaisedButton(
+                      onPressed: () async {
+                        await _signOut();
+                      },
+                      child: Text('Abmelden')),
+                )
               ],
             )));
   }

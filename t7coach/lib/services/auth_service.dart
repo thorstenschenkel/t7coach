@@ -30,17 +30,33 @@ class AuthService {
 
   // create user object based on FirebaseUser
   User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid, email: user.email) : null;
+    if ( user == null ) {
+      return null;
+    }
+
+    return User(
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoUrl: user.photoUrl,
+      providerId: user.providerId,
+      signInMethod: user.providerData?.last?.providerId
+    );
+  }
+
+  Future createNewUserData(String uid) async {
+    if (await DatabaseService(uid: uid).getUserData() == null) {
+      final userData = UserData(uid: uid);
+      userData.accountColor = Colors.primaries[Random().nextInt(Colors.primaries.length)].value;
+      await DatabaseService(uid: uid).updateUserData(userData);
+    }
   }
 
   Future registerWithEmailAndPassword(String email, String password) async {
     try {
       AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
       FirebaseUser user = result.user;
-      // create a new document for the user with the uid
-      final userData = UserData(uid: user.uid);
-      userData.accountColor = Colors.primaries[Random().nextInt(Colors.primaries.length)].value;
-      await DatabaseService(uid: user.uid).updateUserData(userData);
+      await createNewUserData(user.uid);
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

@@ -41,4 +41,15 @@ class UserData {
       return lastName;
     }
   }
+
+  Map<String, dynamic> toJson() =>
+      {
+        'uid': uid,
+        'firstName': firstName,
+        'lastName': lastName,
+        'initials': initials,
+        'accountColor': accountColor,
+        'groupName': groupName
+      };
+
 }

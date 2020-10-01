@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:t7coach/models/user.dart';
 import 'package:t7coach/screens/authenticate/auth_form_constants.dart';
 import 'package:t7coach/services/auth_service.dart';
 
@@ -12,12 +14,13 @@ class FillScreenErrorWidget extends StatelessWidget {
 
   FillScreenErrorWidget({this.title, this.message, this.showInternet = true, this.showButton = true});
 
-  _signOut() async {
-    await _auth.signOut();
+  _signOut(User user) async {
+    await _auth.signOut(user);
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     return Scaffold(
         appBar: new AppBar(
           elevation: 0,
@@ -66,7 +69,7 @@ class FillScreenErrorWidget extends StatelessWidget {
                   visible: showButton,
                   child: RaisedButton(
                       onPressed: () async {
-                        await _signOut();
+                        await _signOut(user);
                       },
                       child: Text('Abmelden')),
                 )

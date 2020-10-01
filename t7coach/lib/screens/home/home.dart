@@ -26,7 +26,7 @@ class _HomeState extends State<Home> {
     final AuthService _auth = AuthService();
 
     _signOut() async {
-      await _auth.signOut();
+      await _auth.signOut(user);
     }
 
     Widget _createDrawerFooter() {

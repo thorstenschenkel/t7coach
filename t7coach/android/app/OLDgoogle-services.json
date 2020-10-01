@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "700422344647-86gljfp31klebc1l9nd1rd1od2cvdaf9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "de.t7online.t7coach",
-            "certificate_hash": "70f8428ccd29856670c5bc6d773833e2b7db0773"
-          }
-        },
-        {
           "client_id": "700422344647-aanvqarummj5i0352fse1lsbg6dllk7c.apps.googleusercontent.com",
           "client_type": 3
         }

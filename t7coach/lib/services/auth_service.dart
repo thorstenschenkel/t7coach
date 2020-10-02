@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:logger/logger.dart';
 import 'package:t7coach/models/auth_error.dart';
 import 'package:t7coach/models/user.dart';
 import 'package:t7coach/models/user_data.dart';
@@ -11,6 +13,8 @@ import 'datadase_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final logger = Logger();
 
   // https://github.com/firebase/FirebaseUI-Android/blob/master/auth/src/main/java/com/firebase/ui/auth/util/FirebaseAuthError.java
   static const errorTexts = {
@@ -30,18 +34,17 @@ class AuthService {
 
   // create user object based on FirebaseUser
   User _userFromFirebaseUser(FirebaseUser user) {
-    if ( user == null ) {
+    if (user == null) {
       return null;
     }
 
     return User(
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName,
-      photoUrl: user.photoUrl,
-      providerId: user.providerId,
-      signInMethod: user.providerData?.last?.providerId
-    );
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        photoUrl: user.photoUrl,
+        providerId: user.providerId,
+        signInMethod: user.providerData?.last?.providerId);
   }
 
   Future createNewUserData(String uid) async {
@@ -59,7 +62,7 @@ class AuthService {
       await createNewUserData(user.uid);
       return _userFromFirebaseUser(user);
     } catch (e) {
-      print(e.toString());
+      logger.w(e);
       return _exceptionToError(e, 'Fehler beim Registrieren');
     }
   }
@@ -70,15 +73,24 @@ class AuthService {
       FirebaseUser user = result.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
-      print(e.toString());
+      logger.w(e);
       return _exceptionToError(e, 'Fehler beim Anmelden');
     }
   }
 
   Future signOut(User user) async {
     try {
+      switch (user.signInMethod) {
+        case GoogleAuthProvider.providerId:
+          await _googleSignIn.signOut();
+          logger.d({'signInMethod': user.signInMethod});
+          print({'method': 'signOut', 'provider': 'google'});
+          break;
+      }
+      logger.d({'signInMethod': 'firebase'});
       return await _auth.signOut();
     } catch (e) {
+      logger.w(e);
       return _exceptionToError(e, 'Fehler beim Abmelden');
     }
   }
@@ -88,6 +100,7 @@ class AuthService {
       await _auth.sendPasswordResetEmail(email: email);
       return null;
     } catch (e) {
+      logger.w(e);
       return _exceptionToError(e, 'Fehler beim Zurücksetzen des Passworts');
     }
   }
@@ -95,6 +108,37 @@ class AuthService {
   // auth change user stream
   Stream<User> get user {
     return _auth.onAuthStateChanged.map((FirebaseUser user) => _userFromFirebaseUser(user));
+  }
+
+  Future signInWithGoogle() async {
+    try {
+      // Attempt to get the currently authenticated user
+      GoogleSignInAccount googleAccount = _googleSignIn.currentUser;
+      if (googleAccount == null) {
+        // Attempt to sign in without user interaction
+        googleAccount = await _googleSignIn.signInSilently();
+      } else {
+        logger.d({'signInWithGoogle': 'currentUser exits'});
+      }
+      if (googleAccount == null) {
+        // Force the user to interactively sign in
+        googleAccount = await _googleSignIn.signIn();
+        logger.d({'signInWithGoogle': 'signIn'});
+      } else {
+        logger.d({'signInWithGoogle': 'signInSilently'});
+      }
+      GoogleSignInAuthentication googleAuth = await googleAccount.authentication;
+      AuthCredential credential =
+          GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+      AuthResult result = await _auth.signInWithCredential(credential);
+      FirebaseUser user = result.user;
+      await createNewUserData(user.uid);
+      logger.d({'method': 'signInWithGoogle'});
+      return _userFromFirebaseUser(user);
+    } catch (e) {
+      logger.w(e);
+      return _exceptionToError(e, 'Fehler beim Anmelden mit Google');
+    }
   }
 
   AuthError _exceptionToError(exception, String defaultText) {

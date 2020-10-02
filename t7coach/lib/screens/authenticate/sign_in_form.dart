@@ -97,7 +97,7 @@ class _SignInFormState extends State<SignInForm> {
                       ],
                     ),
                     SizedBox(height: 10),
-                    AlternativeSignIn(updateErrorAfterSignIn: _updateErrorAfterSignIn)
+                    AlternativeSignIn(updateErrorAfterSignIn: _updateErrorAfterSignIn, loading: widget.loading)
                   ],
                 ),
               ),

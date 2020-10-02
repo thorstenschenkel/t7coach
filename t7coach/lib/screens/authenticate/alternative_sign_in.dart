@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:logger/logger.dart';
 import 'package:t7coach/models/auth_error.dart';
 import 'package:t7coach/services/auth_service.dart';
 
@@ -7,14 +8,19 @@ class AlternativeSignIn extends StatelessWidget {
   final AuthService _auth = AuthService();
   final buttonWidth = 125.0;
   final Function updateErrorAfterSignIn;
+  final Function loading;
+  final logger = Logger();
 
-  AlternativeSignIn({this.updateErrorAfterSignIn});
+  AlternativeSignIn({this.updateErrorAfterSignIn, this.loading});
 
   _signInWithGoogle() async {
-    // dynamic result = await _auth.signInWithGoogle();
-    // if (result is AuthError) {
-    //   updateErrorAfterSignIn(result);
-    // }
+    this.loading(true);
+    dynamic result = await _auth.signInWithGoogle();
+    logger.d( result);
+    if (result is AuthError) {
+      updateErrorAfterSignIn(result);
+    }
+    this.loading(false);
   }
 
   @override
@@ -36,13 +42,6 @@ class AlternativeSignIn extends StatelessWidget {
         alignment: WrapAlignment.center,
         spacing: 10,
         children: [
-          // GoogleSignInButton(
-          //   text: "Google",
-          //   centered: false,
-          //   onPressed: () async {
-          //     await _signInWithGoogle();
-          //   },
-          // ),
           SizedBox(
               width: buttonWidth,
               child: RaisedButton.icon(

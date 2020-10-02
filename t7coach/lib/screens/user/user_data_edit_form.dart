@@ -168,13 +168,15 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       return _accountColor;
     }
 
-    Widget _editButton(Function onPress) {
+    Widget _editButton(Function onPress, bool hidden) {
       return SizedBox(
-        width: 37.5,
-        height: 37.5,
+        width: hidden ? 0 : 37.5,
+        height: hidden ? 0 : 37.5,
         child: FloatingActionButton(
           onPressed: () async {
-            onPress();
+            if (!hidden) {
+              await onPress();
+            }
           },
           child: Icon(Icons.edit),
           backgroundColor: Colors.grey,
@@ -247,7 +249,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                   },
                   keyboardType: TextInputType.number,
                   maxLength: 4,
-                  inputFormatters: [WhitelistingTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(4)],
                   textInputAction: TextInputAction.next,
                   decoration: textInputDecoration.copyWith(labelText: 'Gruppen-PIN'),
                   validator: (String val) {
@@ -259,6 +261,17 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
       );
     }
 
+    CircleAvatar _createCircleAvatar(
+      User user,
+      UserData userData,
+    ) {
+      if (user.photoUrl == null) {
+        return new CircleAvatar(backgroundColor: getCircleColor(userData), radius: 35);
+      } else {
+        return new CircleAvatar(backgroundImage: NetworkImage(user.photoUrl), radius: 35);
+      }
+    }
+
     Widget _createHeader(UserData userData) {
       return Column(
         children: <Widget>[
@@ -266,13 +279,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
             children: <Widget>[
               Stack(
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: new CircleAvatar(
-                      backgroundColor: getCircleColor(userData),
-                      radius: 35,
-                    ),
-                  ),
+                  Padding(padding: const EdgeInsets.all(8.0), child: _createCircleAvatar(user, userData)),
                   Positioned(
                       bottom: 0,
                       right: 0,
@@ -281,7 +288,7 @@ class _UserDataEditFormState extends State<UserDataEditForm> {
                         setState(() {
                           _accountColor = pickerColor;
                         });
-                      }))
+                      }, user.photoUrl != null))
                 ],
               ),
             ],

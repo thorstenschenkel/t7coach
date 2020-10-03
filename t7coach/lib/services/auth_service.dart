@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:logger/logger.dart';
 import 'package:t7coach/models/auth_error.dart';
@@ -14,6 +15,7 @@ import 'datadase_service.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FacebookLogin _facebookLogin = FacebookLogin();
   final logger = Logger();
 
   // https://github.com/firebase/FirebaseUI-Android/blob/master/auth/src/main/java/com/firebase/ui/auth/util/FirebaseAuthError.java
@@ -86,6 +88,11 @@ class AuthService {
           logger.d({'signInMethod': user.signInMethod});
           print({'method': 'signOut', 'provider': 'google'});
           break;
+        case FacebookAuthProvider.providerId:
+          await _facebookLogin.logOut();
+          logger.d({'signInMethod': user.signInMethod});
+          print({'method': 'logOut', 'provider': 'facebook'});
+          break;
       }
       logger.d({'signInMethod': 'firebase'});
       return await _auth.signOut();
@@ -139,6 +146,34 @@ class AuthService {
     } catch (e) {
       logger.w(e);
       return _exceptionToError(e, 'Fehler beim Anmelden mit Google');
+    }
+  }
+
+  Future signInWithFacebook() async {
+    final FacebookLoginResult fbResult = await _facebookLogin.logIn(
+        permissions: [
+          FacebookPermission.publicProfile,
+          FacebookPermission.email]
+    );
+    switch (fbResult.status) {
+      case FacebookLoginStatus.Success:
+        FacebookAccessToken fbToken = fbResult.accessToken;
+        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken: fbToken.token);
+        AuthResult result = await _auth.signInWithCredential(credential);
+        FirebaseUser user = result.user;
+        await createNewUserData(user.uid);
+        logger.d({'method': 'signInWithFacebook'});
+        return _userFromFirebaseUser(user);
+      case FacebookLoginStatus.Cancel:
+        logger.d('facebook login was canceled');
+        break;
+      case FacebookLoginStatus.Error:
+        logger.e(fbResult.error);
+        // TODO
+        break;
+      default:
+        logger.e('unexcpexted facebook login status',  fbResult.status);
+        return _exceptionToError(e, 'Fehler beim Anmelden mit Facebook');
     }
   }
 

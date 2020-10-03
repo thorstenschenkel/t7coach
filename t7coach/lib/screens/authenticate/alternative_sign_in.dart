@@ -23,6 +23,16 @@ class AlternativeSignIn extends StatelessWidget {
     this.loading(false);
   }
 
+  _signInWithFacebook() async {
+    this.loading(true);
+    dynamic result = await _auth.signInWithFacebook();
+    logger.d( result);
+    if (result is AuthError) {
+      updateErrorAfterSignIn(result);
+    }
+    this.loading(false);
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -45,7 +55,9 @@ class AlternativeSignIn extends StatelessWidget {
           SizedBox(
               width: buttonWidth,
               child: RaisedButton.icon(
-                onPressed: () async {},
+                onPressed: () async {
+                  await _signInWithFacebook();
+                },
                 icon: FaIcon(FontAwesomeIcons.facebookSquare, size: 22),
                 label: Text('Facebook'),
                 color: Color(0xff4267B2),

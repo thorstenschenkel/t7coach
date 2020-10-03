@@ -112,21 +112,22 @@ class AuthService {
 
   Future signInWithGoogle() async {
     try {
-      // Attempt to get the currently authenticated user
-      GoogleSignInAccount googleAccount = _googleSignIn.currentUser;
-      if (googleAccount == null) {
-        // Attempt to sign in without user interaction
-        googleAccount = await _googleSignIn.signInSilently();
-      } else {
-        logger.d({'signInWithGoogle': 'currentUser exits'});
-      }
-      if (googleAccount == null) {
-        // Force the user to interactively sign in
-        googleAccount = await _googleSignIn.signIn();
-        logger.d({'signInWithGoogle': 'signIn'});
-      } else {
-        logger.d({'signInWithGoogle': 'signInSilently'});
-      }
+      // // Attempt to get the currently authenticated user
+      // GoogleSignInAccount googleAccount = _googleSignIn.currentUser;
+      // if (googleAccount == null) {
+      //   // Attempt to sign in without user interaction
+      //   googleAccount = await _googleSignIn.signInSilently();
+      // } else {
+      //   logger.d({'signInWithGoogle': 'currentUser exits'});
+      // }
+      // if (googleAccount == null) {
+      //   // Force the user to interactively sign in
+      //   googleAccount = await _googleSignIn.signIn();
+      //   logger.d({'signInWithGoogle': 'signIn'});
+      // } else {
+      //   logger.d({'signInWithGoogle': 'signInSilently'});
+      // }
+      GoogleSignInAccount googleAccount = await _googleSignIn.signIn();
       GoogleSignInAuthentication googleAuth = await googleAccount.authentication;
       AuthCredential credential =
           GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);

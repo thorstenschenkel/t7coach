@@ -65,6 +65,7 @@ class AuthService {
       return _userFromFirebaseUser(user);
     } catch (e) {
       logger.w(e);
+      
       return _exceptionToError(e, 'Fehler beim Registrieren');
     }
   }
